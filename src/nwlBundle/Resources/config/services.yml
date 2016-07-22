@@ -1,0 +1,8 @@
+services:
+  nwl.user:
+    class: nwlBundle\Service\UserService
+    arguments: ["@doctrine.orm.default_entity_manager"]
+
+  nwl.whitelist:
+    class: nwlBundle\Service\WhiteListService
+    arguments: ["@doctrine.orm.default_entity_manager"]

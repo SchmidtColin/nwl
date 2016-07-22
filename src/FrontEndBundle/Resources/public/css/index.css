@@ -1,0 +1,29 @@
+.header{
+    text-align:         center;
+}
+.request-table{
+    width:          100%;
+}
+.request-table-header{
+    background:     #222222;
+    color:          #fff;
+}
+.request{
+    background:     #666666;
+    color:          #fff;
+}
+.request:hover{
+    border:         #000 solid 2px;
+}
+.request.pending{
+    background:     #FFCC00;
+}
+.request.allowed{
+    background:     #6b9311;
+}
+.request.denied{
+    background:     #FF0000;
+}
+.links{
+    margin-top:     10px;
+}
