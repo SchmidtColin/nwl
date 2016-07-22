@@ -46,7 +46,7 @@ $(document).ready(function(){
     </tr>
 </table>
 <div class="links">
-    <a href="{{ path('whitelist-request.form') }}">Whitelist-Anfrage Erstellen</a>
+    <a href="{{ path('whitelist-request.form', {'username': username}) }}">Whitelist-Anfrage Erstellen</a>
 </div>
 {% endblock %}
 

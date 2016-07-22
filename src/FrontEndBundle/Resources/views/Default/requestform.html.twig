@@ -12,7 +12,7 @@ $(document).ready(function(){
         }
         $.post('{{ path('create_white_list_request', {'username': username}) }}',postParams, function(data){
             if(null != data){
-                location.href = '{{ path('whitelist-request.list') }}';
+                location.href = '{{ path('whitelist-request.list', {'username': username}) }}';
             }
         });
         event.preventDefault();

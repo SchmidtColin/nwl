@@ -64,13 +64,14 @@ body{
 <header class="header">
     <div class="nav-bar">
         <div class="nav-bar-content">
-            <a class="btn waves-effect waves-light" href="{{ path('whitelist-request.list',{'username' : '67827' }) }}">Anfragen</a>
-            {% block headerContent %}{% endblock %}
+            {% block headerContent %}
+            <a class="btn waves-effect waves-light" href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a>
+            {% endblock %}
         </div>
         <div class="nav-bar-links">
             {% block headerLinks %}
             <div class="separator-vertical"></div>
-            <a class="btn waves-effect waves-light" href="{{ path('whitelist-request.form') }}">Anfrage Erstellen</a>
+            <a class="btn waves-effect waves-light" href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a>
             <label class="btn waves-effect waves-light">Logout</label>
             {% endblock %}
         </div>
