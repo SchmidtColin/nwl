@@ -12,15 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/",name="whitelist-request.list.bla")
-     */
-    public function indexAction()
-    {
-        $params = array('username'=>'67827');
-        return $this->render('FrontEndBundle:Default:index.html.twig',$params);
-    }
-
-    /**
      * @Route("/login", name="whitelist-request.login")
      */
     public function loginAction(){
