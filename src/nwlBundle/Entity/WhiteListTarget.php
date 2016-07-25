@@ -9,6 +9,7 @@
 namespace nwlBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class WhiteListRequest
@@ -35,6 +36,7 @@ class WhiteListTarget
      * @var string
      *
      * @ORM\Column(name="domain", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $domain;
 

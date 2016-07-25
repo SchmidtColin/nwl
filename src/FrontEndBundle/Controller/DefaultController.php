@@ -2,8 +2,7 @@
 
 namespace FrontEndBundle\Controller;
 
-use FOS\RestBundle\Controller\Annotations\Get;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use nwlBundle\Entity\WhiteListRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,15 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
-    /**
-     * @Route("/",name="whitelist-request.list.bla")
-     */
-    public function indexAction()
-    {
-        $params = array('username'=>'67827');
-        return $this->render('FrontEndBundle:Default:index.html.twig',$params);
-    }
-
     /**
      * @Route("/login", name="whitelist-request.login")
      */
@@ -37,44 +27,44 @@ class DefaultController extends Controller
         $params = array('username'=>$username);
         $template = null ;
         if($username != null){ //check if user or admin
-            $template = 'FrontEndBundle:Default:userList.html.twig';
-        }else{
             $template = 'FrontEndBundle:Default:adminList.html.twig';
+        }else{
+            $template = 'FrontEndBundle:Default:userList.html.twig';
         }
 
         return $this->render($template, $params);
     }
 
     /**
-     * @Get()
-     * @ApiDoc(
-     *     section="f",
-     *      description="d"
-     * )
      * @Route("/whitelist-request/{username}/create", name="whitelist-request.form")
+     * @param Request $request
      * @param $username
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @internal param Request $request
+     * @return Response
      */
     public function createFormAction(Request $request, $username)
     {
-        return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username'=>$username));
+        $whitelistRequest = new WhiteListRequest();
+        $domain = $request->request->get('domain');
+        $reason = $request->request->get('reason');
+
+
+        if ($domain != null && $reason != null) {
+            $userService = $this->get('nwl.user');
+            $whitelistService = $this->get('nwl.whitelist');
+
+            $currentUser = $userService->getOrCreateUserByUsername($username);
+
+            $target = $whitelistService->getOrCreateTargetByDomain($domain);
+
+            $whitelistRequest->setUser($currentUser);
+            $whitelistRequest->setWhitelistTarget($target);
+            $whitelistRequest->setReason($reason);
+            $whitelistRequest->setCreated(new \DateTime());
+            $whitelistService->createWhiteListRequest($whitelistRequest);
+        }
+
+        return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username' => $username));
     }
 
-    /**
-     * @Get()
-     *      * @ApiDoc(
-     *     section="f",
-     *      description="d"
-     * )
-     *  @Route("/foo", name="whitelist-request.list.foo")
-     */
-    public function fooAction(Request $request){
-        if($request->getMethod('POST')){
-            $domain = $request->request->get('domain');
-            $reason = $request->request->get('reason');
-        }
-        return new Response($domain . " " . $reason);
-    }
 
 }

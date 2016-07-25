@@ -1,1 +1,120 @@
 {% extends('FrontEndBundle::base.html.twig') %}
+{% block customStyles %}
+<style>
+.template {
+    display: none;
+}
+.whitelist-request-entry::after{
+    content: "";
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 50px;
+    width: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.whitelist-request-entry.allowed::after{
+    background-image: url('{{ asset('bundles/frontend/img/allowed.png') }}');
+}
+
+.whitelist-request-entry.pending::after {
+    background-image: url('{{ asset('bundles/frontend/img/pending.png') }}');
+}
+
+.whitelist-request-entry.denied::after {
+    background-image: url('{{ asset('bundles/frontend/img/denied.png') }}');
+}
+.links{
+    margin-top:         10px;
+}
+.domain{
+    margin:             0 5px 0 0;
+    display: inline;
+}
+.card-content .header{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-right: 60px;
+}
+</style>
+{% endblock %}
+{% block customScripts %}
+    <script>
+        'use strict';
+        $(document).ready(function(){
+            $.get( '{{ path('list_white_list_requests') }}' , function(data){
+                $.each(data,function(index, element){
+
+                    var targetTemplate = $('#whitelist-target-template').clone();
+                    targetTemplate.removeAttr('id');
+                    targetTemplate.removeClass('template');
+
+                    targetTemplate.find('.domain').text(element.domain);
+                    var stateClasses = ['pending', 'allowed', 'denied'];
+                    targetTemplate.addClass(stateClasses[element.state]);
+
+                    $.each(element.whitelist_requests,function(requestIndex,requestElement){
+                        var requestTemplate = $('#whitelist-target-request-template').clone();
+                        requestTemplate.removeAttr('id');
+                        requestTemplate.removeClass('template');
+
+                        var formattedDate = new Date(requestElement.created);
+                        formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+
+                        requestTemplate.find('user').text(requestElement.user.username);
+                        requestTemplate.find('reason').text(requestElement.reason);
+                        requestTemplate.find('created').text(formattedDate);
+                        $('.whitelist-target-request-table').append(requestTemplate);
+                    });
+                    $('.whitelist-target-list').append(targetTemplate);
+                    //requestTemplate.delay(index*150).fadeIn(300);
+                });
+            });
+        });
+    </script>
+{% endblock %}
+{% block title %}
+    <h1>Meine Whitelist-Anfragen</h1>
+{% endblock %}
+{% block mainContent %}
+    <div class="whitelist-target-list container">
+
+        <div id="whitelist-target-template" class="whitelist-target-entry card template">
+            <div class="card-content">
+                <header class="header">
+                    <h2 class="domain">Domain-Name</h2>
+                    <div class="decision-btns">
+                        <div class="btn waves-effect waves-green light-green">Freigeben</div>
+                        <div class="btn waves-effect waves-red red darken-3">Ablehnnen</div>
+                    </div>
+                </header>
+                <div class="container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="user">Benutzer</th>
+                                <th class="reason">Grund</th>
+                                <th class="created">Erstellt</th>
+                            </tr>
+                        </thead>
+                        <tbody class="whitelist-target-request-table">
+                            <tr id="whitelist-target-request-template" class="template">
+                                <th class="user">User</th>
+                                <th class="reason">Reason</th>
+                                <th class="created">Created</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="links">
+        <a href="{{ path('whitelist-request.form', {'username': username}) }}">Whitelist-Anfrage Erstellen</a>
+    </div>
+{% endblock %}

@@ -50,9 +50,8 @@ class WhiteListRequest
      * @var string
      *
      * @ORM\Column(name="reason", type="text")
-     *
-     * @Assert\NotBlank()
      * @Assert\Length(max="150")
+     * @Assert\NotBlank()
      */
     private $reason;
 
