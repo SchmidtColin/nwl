@@ -13,7 +13,8 @@ class DefaultController extends Controller
     /**
      * @Route("/login", name="whitelist-request.login")
      */
-    public function loginAction(){
+    public function loginAction()
+    {
         return $this->render('FrontEndBundle:Default:login.html.twig');
     }
 
@@ -23,12 +24,13 @@ class DefaultController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function listAction($username){
-        $params = array('username'=>$username);
-        $template = null ;
-        if($username != null){ //check if user or admin
+    public function listAction($username)
+    {
+        $params = array('username' => $username);
+        $template = null;
+        if ($username != null) { //check if user or admin
             $template = 'FrontEndBundle:Default:userList.html.twig';
-        }else{
+        } else {
             $template = 'FrontEndBundle:Default:adminList.html.twig';
         }
 
@@ -61,6 +63,7 @@ class DefaultController extends Controller
             $whitelistRequest->setReason($reason);
             $whitelistRequest->setCreated(new \DateTime());
             $whitelistService->createWhiteListRequest($whitelistRequest);
+            return $this->render('FrontEndBundle:Default:userList.html.twig', array('username' => $username));
         }
 
         return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username' => $username));

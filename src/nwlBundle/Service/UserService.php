@@ -32,7 +32,26 @@ class UserService
      * @param string $id
      * @return null | User
      */
-    public function getById($id){
+    public function getById($id)
+    {
         return $this->em->getRepository('nwlBundle:User')->find($id);
+    }
+
+    public function getOrCreateUserByUsername($username)
+    {
+
+        $userRepo = $this->em->getRepository('nwlBundle:User');
+        $target = $userRepo->findOneBy(array('username' => $username));
+        if (null === $target) {
+            $target = new User();
+            $target->setUsername($username);
+            $target->setFirstname("Guest");
+            $target->setLastname("Guest");
+            $target->setAdmin(false);
+            $this->em->persist($target);
+            $this->em->flush();
+        }
+        return $target;
+
     }
 }
