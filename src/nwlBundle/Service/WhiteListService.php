@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use nwlBundle\Entity\User;
 use nwlBundle\Entity\WhiteListRequest;
 use nwlBundle\Entity\WhiteListTarget;
+use nwlBundle\DTO\WhiteListTargetDTO;
 
 class WhiteListService
 {
@@ -28,6 +29,25 @@ class WhiteListService
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
+    }
+
+    /**
+     * @return WhiteListTargetDTO[]
+     */
+    public function findAllWhiteListTargets()
+    {
+        $targetDTOArray = array();
+        $targets = $this->em->getRepository('nwlBundle:WhiteListTarget')->findAll();
+        foreach($targets as $target)
+        {
+            $dto = new WhiteListTargetDTO();
+            $dto->setDomain($target->getDomain());
+            $dto->setState($target->getState());
+            $criteria =array('whitelistTarget'=>$target);
+            $requestArray = $this->em->getRepository('nwlBundle:WhiteListRequest')->findBy($criteria);
+            $dto->setWhitelistRequests($requestArray);
+        }
+        return $targetDTOArray;
     }
 
     /**
