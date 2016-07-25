@@ -15,6 +15,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use nwlBundle\Entity\WhiteListRequest;
 use nwlBundle\Entity\WhiteListTarget;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class WhiteListController extends FOSRestController
 {
@@ -95,32 +96,51 @@ class WhiteListController extends FOSRestController
         $domain = $request->request->get('domain');
         $reason = $request->request->get('reason');
         $created = new \DateTime();
+
         //All Services
         $userService = $this->get('nwl.user');
         $whiteListService = $this->get('nwl.whitelist');
+        $validator = $this->get("validator");
 
+        $constraintViolations = new ConstraintViolationList();
+
+        //TODO Verification - NULL
         $user = $userService->getById($username);
+
+        //Create Datamodel Dummies
+        $whiteListTarget = new WhiteListTarget();
+        $whiteListTarget->setDomain($domain);
+
+        $whiteListRequest = new WhiteListRequest();
+        $whiteListRequest->setUser($user);
+        $whiteListRequest->setWhitelistTarget($whiteListTarget);
+        $whiteListRequest->setReason($reason);
+        $whiteListRequest->setCreated($created);
+
+        //Validate Datamodel
+        foreach ($validator->validate($whiteListTarget) as $error) {
+            $constraintViolations->add($error);
+        }
+        foreach ($validator->validate($whiteListRequest) as $error) {
+            $constraintViolations->add($error);
+        }
+
+        if($constraintViolations->count() != 0) {
+            return $this->view($constraintViolations, 422);
+        }
+
+        //Insert Data into Database
         $whiteListTarget = $whiteListService->getOrCreateTargetByDomain($domain);
 
         //Check if request exists
-        $whiteListRequest = $whiteListService->findWhiteListRequest($whiteListTarget, $user);
-        if(null === $whiteListRequest){
-            $whiteListRequest = new WhiteListRequest();
-            $whiteListRequest->setUser($user);
-            $whiteListRequest->setWhitelistTarget($whiteListTarget);
-            $whiteListRequest->setReason($reason);
-            $whiteListRequest->setCreated($created);
-
-            $validator = $this->get('validator');
-            $violationList = $validator->validate($whiteListRequest);
-            if($violationList->count() == 0)
-            {
-                return $this->view($violationList,422);
-            }
+        $tmpWhiteListRequest = $whiteListService->findWhiteListRequest($whiteListTarget, $user);
+        if(null === $tmpWhiteListRequest){
+            $whiteListRequest = $tmpWhiteListRequest;
             $whiteListRequest = $whiteListService->createWhiteListRequest($whiteListRequest);
         }
         return $this->view($whiteListRequest);
     }
+
 
     /**
      * @Post(path="/whitelist-target/{id}")
@@ -133,6 +153,7 @@ class WhiteListController extends FOSRestController
      * )
      * @param Request $request
      * @param int $id
+     * @return \FOS\RestBundle\View\View
      */
     public function decideForWhiteListRequestAction(Request $request, $id)
     {
@@ -141,10 +162,14 @@ class WhiteListController extends FOSRestController
         $state = $request->request->get('state');
         $admin = $request->request->get('admin');
 
+        if(null === $whiteListTarget || null === $admin || null === $state) {
+            return $this->view("The given paramters for deciding the state are not valid.", 422);
+        }
         $whiteListTarget->setState($state);
         $whiteListTarget->setDecidedBy($admin);
         $whiteListService = $this->get('nwl.whitelist');
         $whiteListService->decideWhiteListTargetState($whiteListTarget);
 
+        return $this->view($whiteListService->getOrCreateTargetByDomain($whiteListTarget->getDomain()));
     }
 }
