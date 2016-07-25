@@ -95,6 +95,13 @@ class WhiteListController extends FOSRestController
             $whiteListRequest->setWhitelistTarget($whiteListTarget);
             $whiteListRequest->setReason($reason);
             $whiteListRequest->setCreated($created);
+
+            $validator = $this->get('validator');
+            $violationList = $validator->validate($whiteListRequest);
+            if($violationList->count() == 0)
+            {
+                return $this->view($violationList,422);
+            }
             $whiteListRequest = $whiteListService->createWhiteListRequest($whiteListRequest);
         }
         return $this->view($whiteListRequest);

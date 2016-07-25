@@ -1,6 +1,30 @@
 {% extends('FrontEndBundle::base.html.twig') %}
 
 {% block headerContent %}
+
 {% endblock %}
 {% block headerLinks %}
+
+{% endblock %}
+
+{% block siteTitle %}
+Nestecs-Login
+{% endblock %}
+{% block title %}
+    <h1>Login</h1>
+{% endblock %}
+{% block maincontent %}
+<div class="container">
+    <form>
+        <fieldset>
+            <legend>Benutzername</legend>
+            <input type="text" name="username" placeholder="Dein Benutzername"/>
+        </fieldset>
+        <fieldset>
+            <legend>Passwort</legend>
+            <input type="password" name="password" placeholder="Dein Passwort"/>
+        </fieldset>
+        <button class="btn waves-effect waves-light">Einloggen</button>
+    </form>
+</div>
 {% endblock %}

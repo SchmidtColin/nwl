@@ -10,6 +10,7 @@ namespace nwlBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class WhiteListRequest
@@ -26,6 +27,9 @@ class WhiteListRequest
      *
      * @ORM\Id()
      * @ORM\ManyToOne(targetEntity="nwlBundle\Entity\WhiteListTarget")
+     *
+     * @Assert\NotNull()
+     *
      */
     private $whitelistTarget;
 
@@ -36,6 +40,8 @@ class WhiteListRequest
      * @ORM\ManyToOne(targetEntity="nwlBundle\Entity\User")
      * @ORM\JoinColumn(nullable=false, referencedColumnName="username")
      *
+     * @Assert\NotNull()
+     *
      * @Serializer\Exclude()
      */
     private $user;
@@ -44,6 +50,9 @@ class WhiteListRequest
      * @var string
      *
      * @ORM\Column(name="reason", type="text")
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(max="150")
      */
     private $reason;
 
@@ -51,6 +60,8 @@ class WhiteListRequest
      * @var \DateTime
      *
      * @ORM\Column(name="created", type="datetime")
+     *
+     * @Assert\NotNull()
      */
     private $created;
 
