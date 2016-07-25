@@ -2,11 +2,35 @@
 
 {% block siteTitle %}Nestecs-Login{% endblock %}
 
-{% block customscripts %}
+{% block customStyles %}
+<style>
+fieldset{
+    border-color:               #26a69a;
+}
+.form > .btn-container{
+    margin:                     10px 0 0 0;
+
+    display:                    flex;
+    flex-flow:                  row nowrap;
+    justify-content:            center;
+}
+@media (max-width: 499px) {
+    .btn-container > button{
+        width:                      100%;
+    }
+}
+@media ( min-width: 500px) {
+    .btn-container > button{
+        width:                      300px;
+    }
+}
+</style>
+{% endblock %}
+{% block customScripts %}
 <script>
 $(document).ready(function(){
 
-    $('.form .btn').click(function(event){
+    $('.form button').click(function(event){
         var params = $('.form').serialize();
         console.log(params);
         $.post('',params,function(data){
@@ -19,31 +43,36 @@ $(document).ready(function(){
 </script>
 {% endblock %}
 
-{% block headerContent %}{% endblock %}
 {% block headerLinks %}{% endblock %}
+{% block headerLinksRight %}{% endblock %}
 {% block headerLinksSide %}{% endblock %}
+
 {% block title %}
     <h1>Login</h1>
 {% endblock %}
-{% block maincontent %}
+
+{% block mainContent %}
 <div class="container">
     <form class="form">
         <fieldset>
             <legend>Benutzername</legend>
             <div class="input-field col s12">
+                <i class="material-icons prefix">account_circle</i>
                 <input type="text" id="username" name="username" placeholder="Dein Benutzername" class="validate"/>
-                {#<label for="username">Benutzername</label>#}
             </div>
         </fieldset>
         <fieldset>
             <legend>Passwort</legend>
             <div class="input-field col s12">
+                <i class="material-icons prefix">lock</i>
                 <input type="password" id="password" name="password" placeholder="Dein Passwort" class="validate"/>
-                {#<label for="password">Password</label>#}
             </div>
         </fieldset>
-        <div>
-            <button class="btn waves-effect waves-light">Einloggen</button>
+        <div class="btn-container">
+            <button class="btn-large waves-effect waves-teal">
+                Einloggen
+                {#<i class="large material-icons">input</i>#}
+            </button>
         </div>
     </form>
 </div>
