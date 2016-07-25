@@ -1,45 +1,49 @@
 {% extends('FrontEndBundle::base.html.twig') %}
 {% block customscripts %}
-<script>
-$(document).ready(function(){
-    $('#createRequest').click(function(event){
-        var postParams = {};
-        var inputs = document.querySelectorAll('form input');
-        for(var input of inputs){
-            var name = input.name;
-            var value = input.value;
-            postParams[name] = value;
-        }
-        $.post('{{ path('create_white_list_request', {'username': username}) }}',postParams, function(data){
-            if(null != data){
-                location.href = '{{ path('whitelist-request.list', {'username': username}) }}';
-            }
-        });
-        event.preventDefault();
-    });
-});
-</script>
-{% endblock %}
-{% block header %}
-    <h1>Erstelle eine Whitelist-Anfrage</h1>
-{% endblock %}
-{% block maincontent %}
-    <form>
-        <fieldset class="field">
-            <label>URL</label>
-            <input type="text" name="domain" placeholder="Die freizuschaltene URL"/>
-        </fieldset>
-        <fieldset>
-            <label>Begründung</label>
-            <input type="text" name="reason" placeholder="Begründung zur Freischaltung"/>
-        </fieldset>
 
-        <button id="createRequest">Speichern</button>
-    </form>
-{% endblock %}
-{% block customstyles %}
-    <link rel="stylesheet" href="{{ asset('bundles/frontend/css/requestform.css') }}"/>
     <style>
-
+        .btn {
+            border-radius: 20px;
+        }
     </style>
+
 {% endblock %}
+
+            {% block headerLinks %}
+
+            {% endblock %}
+
+
+        {% block title %}
+            <h3 class="center-align" style="margin-top: 11%">Entsperren</h3>
+            <h5 class="center-align">Teilen Sie dem Administrator mit, welche Seite entsperrt werden soll und
+                warum: </h5>
+        {% endblock %}
+
+    {% block maincontent %}
+
+        <div class="container" style="margin-top: 8%">
+
+            <form>
+                <div class="row">
+                    <div class="input-field col s9 offset-s1">
+                        <input id="domain" type="text" class="validate">
+                        <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
+                    </div>
+                    <div class="input-field col s8 offset-s2">
+                        <textarea id="reason" class="materialize-textarea" length="150"></textarea>
+                        <label for="reason"><i class="tiny material-icons left">chat_bubble_outline</i>Begründung</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="waves-effect waves-light btn col s4" style="visibility: hidden">Abschicken</div>
+                    <a class="waves-effect waves-light btn tooltipped col s4" data-position="bottom" data-delay="50"
+                       data-tooltip="Anfrage senden" onclick="Materialize.toast('wird gesendet!', 700)">
+                        Abschicken
+                    </a>
+                    <div class="waves-effect waves-light btn col s4" style="visibility: hidden">Abschicken</div>
+                </div>
+            </form>
+        </div>
+
+    {% endblock %}
