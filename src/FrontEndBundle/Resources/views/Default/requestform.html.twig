@@ -1,18 +1,13 @@
 {% extends('FrontEndBundle::base.html.twig') %}
 {% block customStyles %}
-
     <style>
         .btn {
             border-radius: 20px;
         }
     </style>
-
-
-
 {% endblock %}
 
 {% block customScripts %}
-
     <script>
         function jakoo() {
             if ($("#domain").val() == '' || $("#reason").val() == '') {
@@ -37,17 +32,15 @@
             <h3 class="center-align" style="margin-top: 11%">Entsperren</h3>
             <h5 class="center-align">Teilen Sie dem Administrator mit, welche Seite entsperrt werden soll und
                 warum: </h5>
-
         {% endblock %}
 
     {% block mainContent %}
-
         <div class="container" style="margin-top: 8%">
-
-            <form action="{{ path('whitelist-request.list.foo') }}" method="POST">
+            <form method="POST">
                 <div class="row">
                     <div class="input-field col s9 offset-s1">
-                        <input id="domain" type="text" class="validate" name="domain" onload="jakoo()" oninput="jakoo()">
+                        <input id="domain" type="text" class="validate" name="domain" onload="jakoo()"
+                               oninput="jakoo()">
                         <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
                     </div>
                     <div class="input-field col s8 offset-s2">
@@ -69,6 +62,4 @@
                 </div>
             </form>
         </div>
-
-
     {% endblock %}
