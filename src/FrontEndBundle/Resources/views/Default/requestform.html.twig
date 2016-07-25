@@ -23,11 +23,9 @@
     <script>
         function jakoo() {
             if ($("#domain").val() == '' || $("#reason").val() == '') {
-                $("#sub").addClass("disabled");
-                $('#sub').prop('disabled', true);
+                $("#sub").addClass("disabled").prop('disabled', true);
             } else {
-                $("#sub").removeClass("disabled");
-                $('#sub').prop('disabled', false);
+                $("#sub").removeClass("disabled").prop('disabled', false);
             }
         }
     </script>
