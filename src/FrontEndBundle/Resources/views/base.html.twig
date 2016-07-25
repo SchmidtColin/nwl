@@ -8,8 +8,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
     <!-- Externe Styles -->
     <link rel="stylesheet" href="{{ asset('bundles/frontend/css/materialize-0.97.6.min.css') }}">
-    {% block customstyles %}{% endblock %}
-    {% block customscripts %}{% endblock %}
+    {% block customStyles %}{% endblock %}
+    {% block customScripts %}{% endblock %}
 <style>
 *{
     padding:        0;
@@ -23,38 +23,6 @@ body{
 .header{
     width:          100%;
 }
-.nav-bar{
-    height:         40px;
-    background:     #ff0000;
-
-    display:        flex;
-    flex-flow:      row nowrap;
-}
-.nav-bar-content{
-    flex-grow:      1;
-
-    display:        flex;
-    flex-flow:      row nowrap;
-    justify-content:flex-start;
-    align-items:    center;
-}
-.nav-bar-links{
-
-    display:        flex;
-    flex-flow:      row nowrap;
-    justify-content:space-between;
-    align-items:    center;
-
-    margin:         0 0 0 5px;
-}
-.separator-vertical{
-    width:          3px;
-    height:         100%;
-
-    background:     #000000;
-
-    margin:         0 5px 0 0;
-}
 .title{
     text-align:     center;
 
@@ -64,20 +32,26 @@ body{
 </head>
 <body>
 <header class="header">
-    <div class="nav-bar">
-        <div class="nav-bar-content">
-            {% block headerContent %}
-            <a class="btn waves-effect waves-light" href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a>
-            {% endblock %}
+    <nav>
+        <div class="nav-wrapper">
+            <a href="{{ path('whitelist-request.list',{'username' : username }) }}" class="brand-logo">Logo</a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                {% block headerLinks %}
+                <li><a class="waves-effect waves-light" href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
+                <li><a class="waves-effect waves-light" href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a></li>
+                <li><a class="waves-effect waves-light" href="#">Logout</a></li>
+                {% endblock %}
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                {% block headerLinksSide %}
+                <li><a class="waves-effect waves-light" href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
+                <li><a class="waves-effect waves-light" href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a></li>
+                <li><label class="waves-effect waves-light">Logout</label></li>
+                {% endblock %}
+            </ul>
         </div>
-        <div class="nav-bar-links">
-            {% block headerLinks %}
-            <div class="separator-vertical"></div>
-            <a class="btn waves-effect waves-light" href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a>
-            <label class="btn waves-effect waves-light">Logout</label>
-            {% endblock %}
-        </div>
-    </div>
+    </nav>
 </header>
 <main class="main">
     <div class="title">
@@ -85,7 +59,7 @@ body{
         <h1>Base HTML Title</h1>
         {% endblock %}
     </div>
-    {% block maincontent %}
+    {% block mainContent %}
     <h1>Das ist mein base template main content</h1>
     {% endblock %}
 </main>

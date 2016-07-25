@@ -3,24 +3,48 @@
 {% block siteTitle %}Nestecs-Login{% endblock %}
 
 {% block customscripts %}
+<script>
+$(document).ready(function(){
+
+    $('.form .btn').click(function(event){
+        var params = $('.form').serialize();
+        console.log(params);
+        $.post('',params,function(data){
+
+        });
+        event.preventDefault();
+    });
+
+});
+</script>
+{% endblock %}
 
 {% block headerContent %}{% endblock %}
 {% block headerLinks %}{% endblock %}
+{% block headerLinksSide %}{% endblock %}
 {% block title %}
     <h1>Login</h1>
 {% endblock %}
 {% block maincontent %}
 <div class="container">
-    <form>
+    <form class="form">
         <fieldset>
             <legend>Benutzername</legend>
-            <input type="text" name="username" placeholder="Dein Benutzername"/>
+            <div class="input-field col s12">
+                <input type="text" id="username" name="username" placeholder="Dein Benutzername" class="validate"/>
+                {#<label for="username">Benutzername</label>#}
+            </div>
         </fieldset>
         <fieldset>
             <legend>Passwort</legend>
-            <input type="password" name="password" placeholder="Dein Passwort"/>
+            <div class="input-field col s12">
+                <input type="password" id="password" name="password" placeholder="Dein Passwort" class="validate"/>
+                {#<label for="password">Password</label>#}
+            </div>
         </fieldset>
-        <button class="btn waves-effect waves-light">Einloggen</button>
+        <div>
+            <button class="btn waves-effect waves-light">Einloggen</button>
+        </div>
     </form>
 </div>
 {% endblock %}
