@@ -2,9 +2,12 @@
 
 namespace FrontEndBundle\Controller;
 
+use FOS\RestBundle\Controller\Annotations\Get;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
@@ -43,11 +46,35 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Get()
+     * @ApiDoc(
+     *     section="f",
+     *      description="d"
+     * )
      * @Route("/whitelist-request/{username}/create", name="whitelist-request.form")
+     * @param $username
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @internal param Request $request
      */
-    public function createFormAction($username)
+    public function createFormAction(Request $request, $username)
     {
         return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username'=>$username));
+    }
+
+    /**
+     * @Get()
+     *      * @ApiDoc(
+     *     section="f",
+     *      description="d"
+     * )
+     *  @Route("/foo", name="whitelist-request.list.foo")
+     */
+    public function fooAction(Request $request){
+        if($request->getMethod('POST')){
+            $domain = $request->request->get('domain');
+            $reason = $request->request->get('reason');
+        }
+        return new Response($domain . " " . $reason);
     }
 
 }
