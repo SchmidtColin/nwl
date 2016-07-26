@@ -3,8 +3,8 @@
 namespace FrontEndBundle\Controller;
 
 use nwlBundle\Entity\WhiteListRequest;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,15 +45,17 @@ class DefaultController extends Controller
     public function createFormAction(Request $request, $username)
     {
         $whitelistRequest = new WhiteListRequest();
+        $apikey = $request->request->get('apikey');
         $domain = $request->request->get('domain');
         $reason = $request->request->get('reason');
 
+        var_dump($apikey);
 
-        if ($domain != null && $reason != null) {
+        if ($apikey != null) {
             $userService = $this->get('nwl.user');
             $whitelistService = $this->get('nwl.whitelist');
 
-            $currentUser = $userService->getOrCreateUserByUsername($username);
+            $currentUser = $userService->getUser($apikey);
 
             $target = $whitelistService->getOrCreateTargetByDomain($domain);
 
