@@ -64,6 +64,7 @@
 {% block customScripts %}
 <script>
 'use strict';
+var apikey = localStorage.getItem('apikey');
 var stateClasses = ['pending', 'allowed', 'denied'];
 $(document).ready(function() {
     //$('.collapsible').collapsible({accordion: false});
@@ -71,7 +72,7 @@ $(document).ready(function() {
         var element = $(this);
         var state = 1;
         var admin = 67890;
-        var apikey = localStorage.getItem('apikey');
+        console.log(apikey);
         var id = element.attr('data-id');
         $.ajax({
             url:'/nwlProject/nwl/web/app_dev.php/api/whitelist-target/'+id,
@@ -93,36 +94,44 @@ $(document).ready(function() {
             update(element);
         });
     });
-    $.get('{{ path('list_white_list_targetswhitelistTarget.all') }}', function (data) {
-        $.each(data, function (index, target) {
 
-            var targetTemplate = $('#whitelist-target-template').clone(true);
-            targetTemplate.removeAttr('id');
-            targetTemplate.removeClass('template');
+    $.ajax({
+        url: '{{ path('list_white_list_targetswhitelistTarget.all') }}',
+        type: "GET",
+        headers: {
+            "apikey": apikey
+        },
+        success: function (data) {
+            $.each(data, function (index, target) {
 
-            targetTemplate.find('.domain').text(target.domain);
-            targetTemplate.addClass(stateClasses[target.state]);
-            targetTemplate.find('.allow-btn').attr('data-id',target.id);
-            targetTemplate.find('.deny-btn').attr('data-id',target.id);
+                var targetTemplate = $('#whitelist-target-template').clone(true);
+                targetTemplate.removeAttr('id');
+                targetTemplate.removeClass('template');
 
-            $.each(target.whitelist_requests, function (requestIndex, request) {
-                var requestTemplate = $('#whitelist-target-request-template').clone();
-                requestTemplate.removeAttr('id');
-                requestTemplate.removeClass('template');
+                targetTemplate.find('.domain').text(target.domain);
+                targetTemplate.addClass(stateClasses[target.state]);
+                targetTemplate.find('.allow-btn').attr('data-id', target.id);
+                targetTemplate.find('.deny-btn').attr('data-id', target.id);
 
-                var formattedDate = new Date(request.created);
-                formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+                $.each(target.whitelist_requests, function (requestIndex, request) {
+                    var requestTemplate = $('#whitelist-target-request-template').clone();
+                    requestTemplate.removeAttr('id');
+                    requestTemplate.removeClass('template');
 
-                requestTemplate.find('.user').text(request.user.username);
-                requestTemplate.find('.reason').text(request.reason);
-                requestTemplate.find('.created').text(formattedDate);
+                    var formattedDate = new Date(request.created);
+                    formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
 
-                targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
+                    requestTemplate.find('.user').text(request.user.username);
+                    requestTemplate.find('.reason').text(request.reason);
+                    requestTemplate.find('.created').text(formattedDate);
+
+                    targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
+                });
+                $('.whitelist-target-list').append(targetTemplate);
+
+                //requestTemplate.delay(index*150).fadeIn(300);
             });
-            $('.whitelist-target-list').append(targetTemplate);
-
-            //requestTemplate.delay(index*150).fadeIn(300);
-        });
+        }
     });
 
 });
