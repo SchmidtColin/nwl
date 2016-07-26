@@ -6,13 +6,13 @@
  * Time: 10:23
  */
 
-namespace NWLBundle\Service;
+namespace nwlBundle\Service;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use NWLBundle\Entity\User;
-use NWLBundle\Entity\WhitelistRequest;
-use NWLBundle\Entity\WhitelistTarget;
+use nwlBundle\Entity\User;
+use nwlBundle\Entity\WhitelistRequest;
+use nwlBundle\Entity\WhitelistTarget;
 
 class WhitelistRequestService
 {
@@ -48,7 +48,7 @@ class WhitelistRequestService
      */
     public function findWhitelistRequest($target, $user)
     {
-        $wlrRepo = $this->em->getRepository('NWLBundle:WhitelistRequest');
+        $wlrRepo = $this->em->getRepository('nwlBundle:WhitelistRequest');
         return $wlrRepo->findOneBy(array('whitelistTarget' => $target, 'user' => $user));
     }
 
@@ -58,7 +58,7 @@ class WhitelistRequestService
      */
     public function findRequestsBy($user)
     {
-        return $this->em->getRepository('NWLBundle:WhitelistRequest')->findBy(array('user' => $user));
+        return $this->em->getRepository('nwlBundle:WhitelistRequest')->findBy(array('user' => $user));
     }
 
 }

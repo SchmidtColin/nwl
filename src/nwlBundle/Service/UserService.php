@@ -62,7 +62,7 @@ class UserService
      */
     public function getUser($userid)
     {
-        return $this->em->getRepository('NWLBundle:User')->find($userid);
+        return $this->em->getRepository('nwlBundle:User')->find($userid);
     }
 
     /**
@@ -72,7 +72,7 @@ class UserService
      */
     public function generateLoginToken($username, $password)
     {
-        $userRepository = $this->em->getRepository('NWLBundle:User');
+        $userRepository = $this->em->getRepository('nwlBundle:User');
 
 
         $ldapUser = $this->authenticate($username, $password);

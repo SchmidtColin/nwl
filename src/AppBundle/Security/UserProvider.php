@@ -36,7 +36,7 @@ class UserProvider implements UserProviderInterface
         // Look up the username based on the token in the database, via
         // an API call, or do something entirely different
         $username = '';
-        $user = $this->em->getRepository('NWLBundle:User')->findOneBy(array('apikey' => $apiKey));
+        $user = $this->em->getRepository('nwlBundle:User')->findOneBy(array('apikey' => $apiKey));
         if ($user !== null) {
             return $user->getUsername();
         }
@@ -46,7 +46,7 @@ class UserProvider implements UserProviderInterface
     public function loadUserByUsername($username)
     {
 
-        $user = $this->em->find('NWLBundle:User', $username);
+        $user = $this->em->find('nwlBundle:User', $username);
         return $user;
 //        return new User(
 //            $username,
@@ -68,6 +68,6 @@ class UserProvider implements UserProviderInterface
 
     public function supportsClass($class)
     {
-        return 'NWLBundle\Entity\User' === $class;
+        return 'nwlBundle\Entity\User' === $class;
     }
 }

@@ -6,11 +6,11 @@
  * Time: 09:37
  */
 
-namespace NWLBundle\Service;
+namespace nwlBundle\Service;
 
 
 use Doctrine\ORM\EntityManagerInterface;
-use NWLBundle\Entity\WhitelistTarget;
+use nwlBundle\Entity\WhiteListTarget;
 
 class WhitelistTargetService
 {
@@ -33,7 +33,7 @@ class WhitelistTargetService
      */
     public function getOrCreateTargetBy($domain)
     {
-        $wltRepo = $this->em->getRepository('NWLBundle:WhitelistTarget');
+        $wltRepo = $this->em->getRepository('nwlBundle:WhitelistTarget');
         $target = $wltRepo->findOneBy(array('domain' => $domain));
         if (null == $target) {
             $target = new WhitelistTarget();
