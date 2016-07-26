@@ -6,3 +6,15 @@ services:
   nwl.whitelist:
     class: nwlBundle\Service\WhiteListService
     arguments: ["@doctrine.orm.default_entity_manager"]
+
+  nwl.user:
+    class: nwlBundle\Service\UserService
+    arguments: ["@doctrine.orm.default_entity_manager"]
+
+  nwl.whitelisttarget:
+    class: nwlBundle\Service\WhitelistTargetService
+    arguments: ["@doctrine.orm.default_entity_manager"]
+
+  nwl.whitelistrequest:
+    class: nwlBundle\Service\WhitelistRequestService
+    arguments: ["@doctrine.orm.default_entity_manager"]
