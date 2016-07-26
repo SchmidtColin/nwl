@@ -34,9 +34,7 @@ class WhiteListController extends FOSRestController
         $whiteListRequests = $whiteListService->findAllWhiteListRequests();
         $view = $this->view($whiteListRequests);
         //$context = SerializationContext::create()->setGroups(array('Default','user'));
-        $context = new Context();
-        $context->setGroups(array('Default','user'));
-        $view->setContext($context);
+        $view->getContext()->setGroups(array('Default','user'));
         return $view;
     }
 
@@ -48,15 +46,18 @@ class WhiteListController extends FOSRestController
      *     description="list of all WhiteListTargets"
      * )
      */
-    public function listWhiteListTargetsAction()
+    public function listWhiteListTargetsAction(Request $request)
     {
+        $userService = $this->get('nwl.user');
+        $apikey = $request->headers->get('apikey');
+        if(!$userService->isApiKeyForAdmin($apikey)){
+            return new Response('Invalid APIKEY', 401);
+        }
         $whiteListService = $this->get('nwl.whitelist');
         $whiteListTargetDTOs = $whiteListService->findAllWhiteListTargets();
         $view = $this->view($whiteListTargetDTOs);
         //$context = SerializationContext::create()->setGroups(array('Default','target'));
-        $context = new Context();
-        $context->setGroups(array('Default','target'));
-        $view->setContext($context);
+        $view->getContext()->setGroups(array('Default','target'));
         return $view;
     }
 
