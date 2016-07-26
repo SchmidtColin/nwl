@@ -12,6 +12,8 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/login", name="whitelist-request.login")
+     * @return Response
+     * @internal param Request $request
      */
     public function loginAction()
     {
@@ -24,7 +26,8 @@ class DefaultController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function listAction(Request $request, $username){
+    public function listAction($username)
+    {
         $userService = $this->get('nwl.user');
         $user = $userService->getById($username);
 
@@ -48,17 +51,15 @@ class DefaultController extends Controller
     public function createFormAction(Request $request, $username)
     {
         $whitelistRequest = new WhiteListRequest();
-        $apikey = $request->request->get('apikey');
         $domain = $request->request->get('domain');
         $reason = $request->request->get('reason');
 
-        var_dump($apikey);
 
-        if ($apikey != null) {
+        if ($domain != null && $reason != null) {
             $userService = $this->get('nwl.user');
             $whitelistService = $this->get('nwl.whitelist');
 
-            $currentUser = $userService->getUser($apikey);
+            $currentUser = $userService->getOrCreateUserByUsername($username);
 
             $target = $whitelistService->getOrCreateTargetByDomain($domain);
 

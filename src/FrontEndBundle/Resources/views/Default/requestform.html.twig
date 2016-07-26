@@ -64,7 +64,7 @@
 
     {% block mainContent %}
         <div id="container" class="container">
-            <form method="POST">
+        <form method="POST">
                 <div class="row">
                     <div class="input-field col s9 offset-s1">
                         <input id="domain" type="text" class="validate" name="domain"
@@ -104,6 +104,6 @@
             </form>
 
 
-            <!-- Modal Structure -->
+        <!-- action="{{ path('whitelist-request.list', {'username': username}) }}" -->
 
     {% endblock %}
