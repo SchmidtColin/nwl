@@ -4,13 +4,12 @@
     <!-- Externe Styles -->
     <link rel="stylesheet" href="{{ asset('bundles/frontend/css/materialize-0.97.6.min.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    {% block customStyles %}{% endblock %}
     <!--Externe Scripts-->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
     <script src="{{ asset('bundles/frontend/js/DateFormat.js') }}"></script>
-
-    {% block customStyles %}{% endblock %}
     {% block customScripts %}{% endblock %}
 <style>
 *{
@@ -23,13 +22,11 @@ body{
     height:         100%;
     height:         100vh;
 }
+.logo-img{
+    height: 100%;
+}
 .header{
     width:          100%;
-}
-
-.mainheader{
-    position: fixed;
-    z-index:         999;
 }
 .title{
     text-align:     center;
@@ -37,24 +34,37 @@ body{
 
 }
 </style>
+<script>
+$(document).ready(function() {
+    $(".button-collapse").sideNav();
+    $('ul li .logout').click(function(event){
+       localStorage.setItem('apikey', null);
+       window.open('{{ path('whitelist-request.login') }}','_self');
+       event.preventDefault();
+    });
+});
+</script>
 </head>
 <body>
-<header class="header mainheader">
+<header class="header navbar-fixed">
     <nav>
-        <div class="nav-wrapper">
-            <a href="#" class="brand-logo center">Logo</a>
+        <div class="nav-wrapper light-green lighten-4">
+            <div class="brand-logo center logo-img">
+                <a href="#" class="logo-img"><img class="logo-img" src="{{ asset('bundles/frontend/img/DRV.png') }}" alt="DRV-Logo"/></a>
+                <a href="#" class="logo-img"><img class="logo-img" src="{{ asset('bundles/frontend/img/Nestecs.png') }}" alt="Nestecs-Logo"/></a>
+            </div>
             {% block headerLinks %}
             <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-            <ul class="right hide-on-med-and-down">
-                <li><a class="waves-effect waves-light" href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
-                <li><a class="waves-effect waves-light" href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a></li>
-                <li><a class="waves-effect waves-light" href="#">Logout</a></li>
+            <ul class="right hide-on-med-and-down ">
+                <li><a class="waves-effect waves-light black-text" href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
+                <li><a class="waves-effect waves-light black-text" href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a></li>
+                <li><a class="waves-effect waves-light black-text logout" href="#">Logout</a></li>
                 {% block headerLinksRight %}{% endblock %}
             </ul>
             <ul class="side-nav" id="mobile-demo">
                 <li><a class="waves-effect waves-light" href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
                 <li><a class="waves-effect waves-light" href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a></li>
-                <li><label class="waves-effect waves-light">Logout</label></li>
+                <li><a class="waves-effect waves-light logout" href="#">Logout</a></li>
                 {% block headerLinksSide %}{% endblock %}
             </ul>
             {% endblock %}
