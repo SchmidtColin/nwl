@@ -41,6 +41,25 @@
 
     padding-right: 60px;
 }
+
+.collapsible {
+    box-shadow: none;
+    border: none;
+}
+
+.collapsible-header {
+    background-color: transparent;
+    border: none;
+}
+
+.accordion-arrow {
+    transition: all 0.5s ease;
+    transform: rotate(90deg);
+}
+
+.collapsible-header.active .accordion-arrow {
+    transform: rotate(180deg);
+}
 .decision-btns{
     padding:            10px;
 }
@@ -151,18 +170,22 @@ function update(btn)
 
     <div id="whitelist-target-template" class="whitelist-target-entry card template">
         <div class="card-content">
-            <header class="header">
+            <ul class="collapsible" data-collapsible="accordion">
+                <li>
+            <header class="header collapsible-header">
+                <div class="material-icons accordion-arrow">navigation</div>
                 <h2 class="domain">Domain-Name</h2>
                 <div class="decision-btns">
                     <div class="btn waves-effect waves-green light-green allow-btn">Freigeben</div>
                     <div class="btn waves-effect waves-red red darken-3 deny-btn">Ablehnnen</div>
                 </div>
             </header>
-            <div class="container">
-                <ul class="collapsible" data-collapsible="accordion">
-                    <li>
-                        <div class="collapsible-header active">Requests</div>
-                        <div class="collapsible-body">
+            <div class="container collapsible-body">
+
+
+
+
+
                             <table>
                                 <thead>
                                 <tr>
@@ -179,10 +202,14 @@ function update(btn)
                                 </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </li>
-                </ul>
+
+
+
+
+
             </div>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
