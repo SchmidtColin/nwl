@@ -33,6 +33,21 @@ class WhiteListController extends FOSRestController
         return $this->view($whiteListRequests);
     }
 
+
+    /**
+     * @Get(path="/whitelist-target", name="whitelistTarget.all")
+     * @ApiDoc(
+     *     section="WhiteListTarget",
+     *     description="list of all WhiteListTargets"
+     * )
+     */
+    public function listWhiteListTargetsAction()
+    {
+        $whiteListService = $this->get('nwl.whitelist');
+        $whiteListTargetDTOs = $whiteListService->findAllWhiteListTargets();
+        return $this->view($whiteListTargetDTOs);
+    }
+
     /**
      * @Get(path="/user/{username}/whitelist-request")
      * @ApiDoc(

@@ -24,14 +24,13 @@ class DefaultController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function listAction($username)
-    {
-        $params = array('username' => $username);
-        $template = null;
-        if ($username != null) { //check if user or admin
-            $template = 'FrontEndBundle:Default:userList.html.twig';
-        } else {
+    public function listAction($username){
+        $params = array('username'=>$username);
+        $template = null ;
+        if($username != null){ //check if user or admin
             $template = 'FrontEndBundle:Default:adminList.html.twig';
+        }else{
+            $template = 'FrontEndBundle:Default:userList.html.twig';
         }
 
         return $this->render($template, $params);
