@@ -32,9 +32,12 @@ $(document).ready(function(){
 
     $('.form button').click(function(event){
         var params = $('.form').serialize();
-        console.log(params);
-        $.post('',params,function(data){
-
+        $.post('{{ path('loginsecurity.auth') }}', params, function (data) {
+            if (null != data.token) {
+                var apikey = data.token;
+                localStorage.setItem('apikey', apikey);
+                window.open('./whitelist-request/testtest', '_self');
+            }
         });
         event.preventDefault();
     });

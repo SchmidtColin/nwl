@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SecurityController extends FOSRestController
 {
     /**
-     * @Post("/auth")
+     * @Post("/auth", name="security.auth")
      * @ApiDoc(
      *     section="Authentification",
      *     description="User can aquire a login Token for performing API requests",
