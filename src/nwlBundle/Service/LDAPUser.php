@@ -6,7 +6,7 @@
  * Time: 17:57
  */
 
-namespace NWLBundle\Service;
+namespace nwlBundle\Service;
 
 
 class LDAPUser
