@@ -9,13 +9,24 @@
 namespace nwlBundle\DTO;
 
 
+use nwlBundle\Entity\WhiteListRequest;
+
 class WhiteListTargetDTO
 {
 
+    /**
+     * @var string
+     */
     private $domain;
 
+    /**
+     * @var int
+     */
     private $state;
 
+    /**
+     * @var WhiteListRequest[]
+     */
     private $whitelistRequests;
 
     /**

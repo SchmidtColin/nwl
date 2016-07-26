@@ -40,12 +40,13 @@ class WhiteListService
         $targets = $this->em->getRepository('nwlBundle:WhiteListTarget')->findAll();
         foreach($targets as $target)
         {
-            $dto = new WhiteListTargetDTO();
-            $dto->setDomain($target->getDomain());
-            $dto->setState($target->getState());
+            $targetDTO = new WhiteListTargetDTO();
+            $targetDTO->setDomain($target->getDomain());
+            $targetDTO->setState($target->getState());
             $criteria =array('whitelistTarget'=>$target);
             $requestArray = $this->em->getRepository('nwlBundle:WhiteListRequest')->findBy($criteria);
-            $dto->setWhitelistRequests($requestArray);
+            $targetDTO->setWhitelistRequests($requestArray);
+            array_push($targetDTOArray,$targetDTO);
         }
         return $targetDTOArray;
     }
@@ -106,7 +107,14 @@ class WhiteListService
         return $whiteListRequest;
     }
 
-    public function decideWhiteListTargetState($target){
-
+    /**
+     * @param WhiteListTarget $target
+     * @return mixed
+     */
+    public function decideWhiteListTargetState($target)
+    {
+        $this->em->persist($target);
+        $this->em->flush();
+        return $target;
     }
 }

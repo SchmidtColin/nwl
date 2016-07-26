@@ -8,6 +8,7 @@
 
 namespace nwlBundle\Controller;
 
+use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -15,6 +16,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use nwlBundle\Entity\WhiteListRequest;
 use nwlBundle\Entity\WhiteListTarget;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\ConstraintViolationList;
 
 class WhiteListController extends FOSRestController
@@ -30,7 +32,12 @@ class WhiteListController extends FOSRestController
     {
         $whiteListService = $this->get('nwl.whitelist');
         $whiteListRequests = $whiteListService->findAllWhiteListRequests();
-        return $this->view($whiteListRequests);
+        $view = $this->view($whiteListRequests);
+        //$context = SerializationContext::create()->setGroups(array('Default','user'));
+        $context = new Context();
+        $context->setGroups(array('Default','user'));
+        $view->setContext($context);
+        return $view;
     }
 
 
@@ -45,7 +52,12 @@ class WhiteListController extends FOSRestController
     {
         $whiteListService = $this->get('nwl.whitelist');
         $whiteListTargetDTOs = $whiteListService->findAllWhiteListTargets();
-        return $this->view($whiteListTargetDTOs);
+        $view = $this->view($whiteListTargetDTOs);
+        //$context = SerializationContext::create()->setGroups(array('Default','target'));
+        $context = new Context();
+        $context->setGroups(array('Default','target'));
+        $view->setContext($context);
+        return $view;
     }
 
     /**
@@ -153,7 +165,7 @@ class WhiteListController extends FOSRestController
      * )
      * @param Request $request
      * @param int $id
-     * @return \FOS\RestBundle\View\View
+     * @return Response
      */
     public function decideForWhiteListRequestAction(Request $request, $id)
     {
@@ -170,6 +182,6 @@ class WhiteListController extends FOSRestController
         $whiteListService = $this->get('nwl.whitelist');
         $whiteListService->decideWhiteListTargetState($whiteListTarget);
 
-        return $this->view($whiteListService->getOrCreateTargetByDomain($whiteListTarget->getDomain()));
+        return new Response('OK');
     }
 }
