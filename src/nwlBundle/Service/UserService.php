@@ -62,7 +62,7 @@ class UserService
     public function isApiKeyForAdmin($apikey)
     {
         /** @var User $user */
-        $user = $userRepo = $this->em->getRepository('nwlBundle:User')->findOneBy(array('apikey'=>$apikey));
+        $user = $userRepo = $this->em->getRepository('nwlBundle:User')->findOneBy(array('apikey' => $apikey));
         return $user->getAdmin();
     }
 
@@ -209,5 +209,20 @@ class UserService
             return null;
         }
     }
+
+
+    public function getTemplate(User $user)
+    {
+        $template = null;
+        $isAdminAuth = $user->getAdmin();
+        if ($isAdminAuth) {
+            $template = 'FrontEndBundle:Default:adminList.html.twig';
+        } else {
+            $template = 'FrontEndBundle:Default:userList.html.twig';
+        }
+
+        return $template;
+    }
+
 
 }

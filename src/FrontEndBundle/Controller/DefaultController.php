@@ -3,8 +3,8 @@
 namespace FrontEndBundle\Controller;
 
 use nwlBundle\Entity\WhiteListRequest;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,6 +12,8 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/login", name="whitelist-request.login")
+     * @return Response
+     * @internal param Request $request
      */
     public function loginAction()
     {
@@ -24,18 +26,13 @@ class DefaultController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function listAction(Request $request, $username){
+    public function listAction($username)
+    {
         $userService = $this->get('nwl.user');
         $user = $userService->getById($username);
 
-        $template = null ;
         $params = array('username'=>$username);
-        $isAdminAuth = $user->getAdmin();
-        if($isAdminAuth){
-            $template = 'FrontEndBundle:Default:adminList.html.twig';
-        }else{
-            $template = 'FrontEndBundle:Default:userList.html.twig';
-        }
+        $template = $userService->getTemplate($user);
         return $this->render($template, $params);
     }
 
@@ -56,16 +53,18 @@ class DefaultController extends Controller
             $userService = $this->get('nwl.user');
             $whitelistService = $this->get('nwl.whitelist');
 
-            $currentUser = $userService->getOrCreateUserByUsername($username);
-
+            $user = $userService->getById($username);
             $target = $whitelistService->getOrCreateTargetByDomain($domain);
 
-            $whitelistRequest->setUser($currentUser);
+            $whitelistRequest->setUser($user);
             $whitelistRequest->setWhitelistTarget($target);
             $whitelistRequest->setReason($reason);
             $whitelistRequest->setCreated(new \DateTime());
             $whitelistService->createWhiteListRequest($whitelistRequest);
-            return $this->render('FrontEndBundle:Default:userList.html.twig', array('username' => $username));
+
+            $params = array('username' => $username);
+            $template = $userService->getTemplate($user);
+            return $this->render($template, $params);
         }
 
         return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username' => $username));

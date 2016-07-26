@@ -22,28 +22,30 @@
 {% block customScripts %}
     <script src="{{ asset('bundles/frontend/js/domainValidation.js') }}"></script>
     <script>
+        var apikey = localStorage.getItem('apikey');
         $(document).ready(function () {
             $('.modal-trigger').leanModal();
         });
 
-        function jakoo() {
+        function updateSubmit() {
+            console.log(apikey);
             if ($("#domain").val() == '' || $("#reason").val() == '') {
                 $("#sub").addClass("disabled").prop('disabled', true);
             } else {
                 $("#sub").removeClass("disabled").prop('disabled', false);
             }
             $parsedUrl = parseURL($("#domain").val());
-            if($parsedUrl === null || $parsedUrl.protocol.length <= 0){
+            if ($parsedUrl === null || $parsedUrl.protocol.length <= 0) {
                 $("#sub").addClass("disabled");
-                $('#sub').prop('disabled',true);
+                $('#sub').prop('disabled', true);
             }
         }
 
 
-        function beforeSubmitOptimizeDomain(){
-            if(parseURL($("#domain").val()).path == null){
+        function optimizeDomain() {
+            if (parseURL($("#domain").val()).path == null) {
                 var zwischenSpeicher = $("#domain").val();
-                $("#domain").val(zwischenSpeicher+"/");
+                $("#domain").val(zwischenSpeicher + "/");
                 return true;
             }
         }
@@ -62,16 +64,16 @@
 
     {% block mainContent %}
         <div id="container" class="container">
-            <form method="POST">
+        <form method="POST">
                 <div class="row">
                     <div class="input-field col s9 offset-s1">
                         <input id="domain" type="text" class="validate" name="domain"
-                               oninput="jakoo()">
+                               oninput="updateSubmit()">
                         <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
                     </div>
                     <div class="input-field col s8 offset-s2">
                         <textarea id="reason" class="materialize-textarea" length="150" name="reason"
-                                  oninput="jakoo()"></textarea>
+                                  oninput="updateSubmit()"></textarea>
                         <label for="reason"><i
                                     class="tiny material-icons left">chat_bubble_outline</i>Begründung</label>
                     </div>
@@ -92,17 +94,16 @@
                         <div class="modal-footer">
                             <a href="#!"
                                class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
-                            <button class=" modal-action modal-close waves-effect waves-green btn-flat" onclick="beforeSubmitOptimizeDomain()" type="submit"
+                            <button class=" modal-action modal-close waves-effect waves-green btn-flat"
+                                    onclick="optimizeDomain()" type="submit"
                                     name="action">Bestätigen
                             </button>
                         </div>
                     </div>
                 </div>
             </form>
-        </div>
 
 
-
-        <!-- Modal Structure -->
+        <!-- action="{{ path('whitelist-request.list', {'username': username}) }}" -->
 
     {% endblock %}

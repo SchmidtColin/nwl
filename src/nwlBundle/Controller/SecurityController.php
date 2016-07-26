@@ -26,6 +26,8 @@ class SecurityController extends FOSRestController
      *          { "name"="password", "dataType"="string", "required"=true, "description"="Users password" }
      *     }
      * )
+     * @param Request $request
+     * @return \FOS\RestBundle\View\View
      */
     public function loginAction(Request $request)
     {
