@@ -37,31 +37,39 @@
 </style>
 {% endblock %}
 {% block customScripts %}
-    <script>
-        'use strict';
-        $(document).ready(function(){
-            $.get( '{{ path('list_white_list_request',{'username' : username }) }}' , function(data){
-                $.each(data,function(index, element){
+<script>
+'use strict';
+var apikey = localStorage.getItem('apikey');
+var stateClasses = ['pending', 'allowed', 'denied'];
+$(document).ready(function(){
+    $.ajax({
+        url: '{{ path('list_white_list_request',{'username' : username }) }}',
+        type: "GET",
+        headers: {
+            "apikey": apikey
+        },
+        success:function (data) {
+            $.each(data,function(index, element){
 
-                    var requestTemplate = $('#whitelist-request-template').clone();
-                    requestTemplate.removeAttr('id');
-                    requestTemplate.removeClass('template');
+                var requestTemplate = $('#whitelist-request-template').clone();
+                requestTemplate.removeAttr('id');
+                requestTemplate.removeClass('template');
 
-                    var formattedDate = new Date(element.created);
-                    formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+                var formattedDate = new Date(element.created);
+                formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
 
-                    var stateClasses = ['pending', 'allowed', 'denied'];
-                    requestTemplate.addClass(stateClasses[element.whitelist_target.state]);
+                requestTemplate.addClass(stateClasses[element.whitelist_target.state]);
 
-                    requestTemplate.find('.domain').text(element.whitelist_target.domain);
-                    requestTemplate.find('.reason').text(element.reason);
-                    requestTemplate.find('.created').text(formattedDate);
-                    $('.whitelist-request-list').append(requestTemplate);
-                    //requestTemplate.delay(index*150).fadeIn(300);
-                });
+                requestTemplate.find('.domain').text(element.whitelist_target.domain);
+                requestTemplate.find('.reason').text(element.reason);
+                requestTemplate.find('.created').text(formattedDate);
+                $('.whitelist-request-list').append(requestTemplate);
+                //requestTemplate.delay(index*150).fadeIn(300);
             });
-        });
-    </script>
+        }
+    });
+});
+</script>
 {% endblock %}
 {% block title %}
     <h1>Meine Whitelist-Anfragen</h1>
