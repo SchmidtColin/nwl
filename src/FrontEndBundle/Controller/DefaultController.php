@@ -31,14 +31,8 @@ class DefaultController extends Controller
         $userService = $this->get('nwl.user');
         $user = $userService->getById($username);
 
-        $template = null ;
         $params = array('username'=>$username);
-        $isAdminAuth = $user->getAdmin();
-        if($isAdminAuth){
-            $template = 'FrontEndBundle:Default:adminList.html.twig';
-        }else{
-            $template = 'FrontEndBundle:Default:userList.html.twig';
-        }
+        $template = $userService->getTemplate($user);
         return $this->render($template, $params);
     }
 
@@ -68,14 +62,8 @@ class DefaultController extends Controller
             $whitelistRequest->setCreated(new \DateTime());
             $whitelistService->createWhiteListRequest($whitelistRequest);
 
-            $template = null;
             $params = array('username' => $username);
-            $isAdminAuth = $user->getAdmin();
-            if ($isAdminAuth) {
-                $template = 'FrontEndBundle:Default:adminList.html.twig';
-            } else {
-                $template = 'FrontEndBundle:Default:userList.html.twig';
-            }
+            $template = $userService->getTemplate($user);
             return $this->render($template, $params);
         }
 
