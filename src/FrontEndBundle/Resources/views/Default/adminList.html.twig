@@ -53,62 +53,85 @@
 .pending{
     background:  #b3e5fc;
 }
-.allowed .decision-btns .allow{
+.allowed .decision-btns .allow-btn{
     display: none;
 }
-.denied .decision-btns .deny{
+.denied .decision-btns .deny-btn{
     display: none;
 }
 </style>
 {% endblock %}
 {% block customScripts %}
 <script>
-    'use strict';
-    $(document).ready(function() {
-        //$('.collapsible').collapsible({accordion: false});
-        $('.allow').click(function(){
-            var state = 1;
-            $.post('{{ path('decide_for_white_list_request',{'id':2}) }}',{state: state, admin: 67890}, function(data){
-
-            });
+'use strict';
+var stateClasses = ['pending', 'allowed', 'denied'];
+$(document).ready(function() {
+    //$('.collapsible').collapsible({accordion: false});
+    $('.allow-btn').click(function(){
+        var element = $(this);
+        var state = 1;
+        var admin = 67890;
+        var apikey = localStorage.getItem('apikey');
+        var id = element.attr('data-id');
+        $.ajax({
+            url:'/nwlProject/nwl/web/app_dev.php/api/whitelist-target/'+id,
+            type:"POST",
+            headers: {
+                "apikey" : apikey
+            },
+            data:{state: state, admin: admin},
+            success: function(){ update(element); },
+            dataType:"json"
         });
-        $('.deny').click(function(){
-            var state = 2;
-            $.post('{{ path('decide_for_white_list_request',{'id':2}) }}',{state: state, admin: 67890}, function(data){
-
-            });
-        });
-        $.get('{{ path('list_white_list_targetswhitelistTarget.all') }}', function (data) {
-            $.each(data, function (index, element) {
-
-                var targetTemplate = $('#whitelist-target-template').clone();
-                targetTemplate.removeAttr('id');
-                targetTemplate.removeClass('template');
-
-                targetTemplate.find('.domain').text(element.domain);
-                var stateClasses = ['pending', 'allowed', 'denied'];
-                targetTemplate.addClass(stateClasses[element.state]);
-
-                $.each(element.whitelist_requests, function (requestIndex, requestElement) {
-                    var requestTemplate = $('#whitelist-target-request-template').clone();
-                    requestTemplate.removeAttr('id');
-                    requestTemplate.removeClass('template');
-
-                    var formattedDate = new Date(requestElement.created);
-                    formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
-
-                    requestTemplate.find('.user').text(requestElement.user.username);
-                    requestTemplate.find('.reason').text(requestElement.reason);
-                    requestTemplate.find('.created').text(formattedDate);
-
-                    targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
-                });
-                $('.whitelist-target-list').append(targetTemplate);
-                //requestTemplate.delay(index*150).fadeIn(300);
-            });
-        });
-
     });
+    $('.deny-btn').click(function(){
+        var element = $(this);
+        var state = 2;
+        var admin = 67890;
+        var id = element.attr('data-id');
+        $.post('/nwlProject/nwl/web/app_dev.php/api/whitelist-target/'+id,{state: state, admin: admin}, function(){
+            update(element);
+        });
+    });
+    $.get('{{ path('list_white_list_targetswhitelistTarget.all') }}', function (data) {
+        $.each(data, function (index, target) {
+
+            var targetTemplate = $('#whitelist-target-template').clone(true);
+            targetTemplate.removeAttr('id');
+            targetTemplate.removeClass('template');
+
+            targetTemplate.find('.domain').text(target.domain);
+            targetTemplate.addClass(stateClasses[target.state]);
+            targetTemplate.find('.allow-btn').attr('data-id',target.id);
+            targetTemplate.find('.deny-btn').attr('data-id',target.id);
+
+            $.each(target.whitelist_requests, function (requestIndex, request) {
+                var requestTemplate = $('#whitelist-target-request-template').clone();
+                requestTemplate.removeAttr('id');
+                requestTemplate.removeClass('template');
+
+                var formattedDate = new Date(request.created);
+                formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+
+                requestTemplate.find('.user').text(request.user.username);
+                requestTemplate.find('.reason').text(request.reason);
+                requestTemplate.find('.created').text(formattedDate);
+
+                targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
+            });
+            $('.whitelist-target-list').append(targetTemplate);
+
+            //requestTemplate.delay(index*150).fadeIn(300);
+        });
+    });
+
+});
+function update(btn)
+{
+    console.log(btn);
+    var targetEntry = btn.parent().parent().parent().parent();
+    console.log(targetEntry);
+}
 </script>
 {% endblock %}
 {% block title %}
@@ -122,8 +145,8 @@
             <header class="header">
                 <h2 class="domain">Domain-Name</h2>
                 <div class="decision-btns">
-                    <div class="btn waves-effect waves-green light-green allow">Freigeben</div>
-                    <div class="btn waves-effect waves-red red darken-3 deny">Ablehnnen</div>
+                    <div class="btn waves-effect waves-green light-green allow-btn">Freigeben</div>
+                    <div class="btn waves-effect waves-red red darken-3 deny-btn">Ablehnnen</div>
                 </div>
             </header>
             <div class="container">

@@ -15,6 +15,10 @@ class WhiteListTargetDTO
 {
 
     /**
+     * @var int
+     */
+    private $id;
+    /**
      * @var string
      */
     private $domain;
@@ -28,6 +32,24 @@ class WhiteListTargetDTO
      * @var WhiteListRequest[]
      */
     private $whitelistRequests;
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+
 
     /**
      * @return mixed

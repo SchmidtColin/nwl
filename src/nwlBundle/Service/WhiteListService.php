@@ -41,6 +41,7 @@ class WhiteListService
         foreach($targets as $target)
         {
             $targetDTO = new WhiteListTargetDTO();
+            $targetDTO->setId($target->getId());
             $targetDTO->setDomain($target->getDomain());
             $targetDTO->setState($target->getState());
             $criteria =array('whitelistTarget'=>$target);
@@ -113,7 +114,6 @@ class WhiteListService
      */
     public function decideWhiteListTargetState($target)
     {
-        $this->em->persist($target);
         $this->em->flush();
         return $target;
     }

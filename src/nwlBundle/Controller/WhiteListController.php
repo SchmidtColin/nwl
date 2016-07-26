@@ -168,19 +168,19 @@ class WhiteListController extends FOSRestController
      */
     public function decideForWhiteListRequestAction(Request $request, $id)
     {
-
+        $userService = $this->get('nwl.user');
         $whiteListTarget = $this->getDoctrine()->getRepository('nwlBundle:WhiteListTarget')->find($id);
         $state = $request->request->get('state');
-        $admin = $request->request->get('admin');
+        $adminParam = $request->request->get('admin');
+        $admin = $userService->getById($adminParam);
 
-        if(null === $whiteListTarget || null === $admin || null === $state) {
+        if(null === $whiteListTarget || null === $adminParam || null === $state) {
             return $this->view("The given paramters for deciding the state are not valid.", 422);
         }
         $whiteListTarget->setState($state);
         $whiteListTarget->setDecidedBy($admin);
-        $whiteListService = $this->get('nwl.whitelist');
-        $whiteListService->decideWhiteListTargetState($whiteListTarget);
 
+        $this->get('doctrine.orm.default_entity_manager')->flush();
         return new Response('OK');
     }
 }
