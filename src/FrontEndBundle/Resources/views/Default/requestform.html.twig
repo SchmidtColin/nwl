@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block customScripts %}
-    <script src="../../public/js/domainValidation.js"></script>
+    <script src="{{ asset('bundles/frontend/js/domainValidation.js') }}"></script>
     <script>
         $(document).ready(function () {
             $('.modal-trigger').leanModal();
@@ -39,14 +39,15 @@
             }
         }
 
-        $(function(){
-            $('#createForm').submit(function(){
-                if(parseURL($("#domain").val()).path === null){
-                    $('#domain').val += "/";
-                    return true;
-                }
-            });
-        });
+
+        function beforeSubmitOptimizeDomain(){
+            if(parseURL($("#domain").val()).path == null){
+                var zwischenSpeicher = $("#domain").val();
+                $("#domain").val(zwischenSpeicher+"/");
+                return true;
+            }
+        }
+
     </script>
 {% endblock %}
 
@@ -61,7 +62,7 @@
 
     {% block mainContent %}
         <div id="container" class="container">
-            <form id="createForm" method="POST">
+            <form method="POST">
                 <div class="row">
                     <div class="input-field col s9 offset-s1">
                         <input id="domain" type="text" class="validate" name="domain"
@@ -91,7 +92,7 @@
                         <div class="modal-footer">
                             <a href="#!"
                                class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
-                            <button class=" modal-action modal-close waves-effect waves-green btn-flat" type="submit"
+                            <button class=" modal-action modal-close waves-effect waves-green btn-flat" onclick="beforeSubmitOptimizeDomain()" type="submit"
                                     name="action">Bestätigen
                             </button>
                         </div>
