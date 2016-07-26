@@ -147,7 +147,6 @@ class WhiteListController extends FOSRestController
         //Check if request exists
         $tmpWhiteListRequest = $whiteListService->findWhiteListRequest($whiteListTarget, $user);
         if(null === $tmpWhiteListRequest){
-            $whiteListRequest = $tmpWhiteListRequest;
             $whiteListRequest = $whiteListService->createWhiteListRequest($whiteListRequest);
         }
         return $this->view($whiteListRequest);

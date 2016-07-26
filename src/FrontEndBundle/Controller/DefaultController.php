@@ -13,7 +13,8 @@ class DefaultController extends Controller
     /**
      * @Route("/login", name="whitelist-request.login")
      */
-    public function loginAction(){
+    public function loginAction()
+    {
         return $this->render('FrontEndBundle:Default:login.html.twig');
     }
 
@@ -61,6 +62,7 @@ class DefaultController extends Controller
             $whitelistRequest->setReason($reason);
             $whitelistRequest->setCreated(new \DateTime());
             $whitelistService->createWhiteListRequest($whitelistRequest);
+            return $this->render('FrontEndBundle:Default:userList.html.twig', array('username' => $username));
         }
 
         return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username' => $username));

@@ -4,42 +4,68 @@
         .btn {
             border-radius: 20px;
         }
+
+        #container {
+            margin-top: 3%;
+        }
+
+        h3 {
+            margin-top: 11%;
+        }
+
+        .dummy {
+            visibility: hidden;
+        }
     </style>
 {% endblock %}
 
 {% block customScripts %}
+    <script src="{{ asset('bundles/frontend/js/domainValidation.js') }}"></script>
     <script>
+        $(document).ready(function () {
+            $('.modal-trigger').leanModal();
+        });
+
         function jakoo() {
             if ($("#domain").val() == '' || $("#reason").val() == '') {
-                $("#sub").addClass("disabled");
-                $('#sub').prop('disabled', true);
+                $("#sub").addClass("disabled").prop('disabled', true);
             } else {
-                $("#sub").removeClass("disabled");
-                $('#sub').prop('disabled', false);
+                $("#sub").removeClass("disabled").prop('disabled', false);
+            }
+            $parsedUrl = parseURL($("#domain").val());
+            if($parsedUrl === null || $parsedUrl.protocol.length <= 0){
+                $("#sub").addClass("disabled");
+                $('#sub').prop('disabled',true);
             }
         }
+
+
+        function beforeSubmitOptimizeDomain(){
+            if(parseURL($("#domain").val()).path == null){
+                var zwischenSpeicher = $("#domain").val();
+                $("#domain").val(zwischenSpeicher+"/");
+                return true;
+            }
+        }
+
     </script>
 {% endblock %}
 
-
-
-            {% block headerLinks %}
-
-            {% endblock %}
-
-
         {% block title %}
-            <h3 class="center-align" style="margin-top: 11%">Entsperren</h3>
-            <h5 class="center-align">Teilen Sie dem Administrator mit, welche Seite entsperrt werden soll und
-                warum: </h5>
+            <div class="center-align">
+                <h3>Entsperren</h3>
+                <h5>Teilen Sie dem Administrator mit, welche Seite entsperrt werden soll und
+                    warum: </h5>
+                <h1><i class="medium material-icons center">lock_open</i></h1>
+            </div>
         {% endblock %}
 
     {% block mainContent %}
-        <div class="container" style="margin-top: 8%">
+        <div id="container" class="container">
             <form method="POST">
                 <div class="row">
                     <div class="input-field col s9 offset-s1">
-                        <input id="domain" type="text" class="validate" name="domain" onload="jakoo()"
+                        <input id="domain" type="text" class="validate" name="domain"
                                oninput="jakoo()">
                         <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
                     </div>
@@ -51,15 +77,32 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="waves-effect waves-light btn col s4" style="visibility: hidden">Abschicken</div>
-                    <button disabled="true" id="sub" class="btn waves-effect waves-light disabled col s4"
-                            type="submit" name="action"
-                            data-position="bottom" data-delay="50"
-                            data-tooltip="Anfrage senden">
-                        Abschicken
+                    <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
+                    <button disabled="disabled" id="sub"
+                            class="waves-effect waves-light btn modal-trigger disabled col s2" href="#modal1">Los
                     </button>
-                    <div class="waves-effect waves-light btn col s4" style="visibility: hidden">Abschicken</div>
+                    <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
+                    <div id="modal1" class="modal">
+                        <div class="modal-content">
+                            <h4>Anfrage versenden</h4>
+                            <p>Durch Klicken auf "Bestätigen" wird Ihre Anfrage an den Admin gesenden.
+                                </br> Sie werden dann auf Ihre Übersicht weitergeleitet.
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="#!"
+                               class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
+                            <button class=" modal-action modal-close waves-effect waves-green btn-flat" onclick="beforeSubmitOptimizeDomain()" type="submit"
+                                    name="action">Bestätigen
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
+
+
+
+        <!-- Modal Structure -->
+
     {% endblock %}
