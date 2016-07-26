@@ -1,136 +1,171 @@
 {% extends('FrontEndBundle::base.html.twig') %}
 {% block siteTitle %}Alle Whitelist Request{% endblock %}
 {% block customStyles %}
-<style>
-.template {
-    display: none;
-}
-.whitelist-target-entry::after{
-    content: "";
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    height: 50px;
-    width: 50px;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-.whitelist-target-entry.allowed::after{
-    background-image: url('{{ asset('bundles/frontend/img/allowed.png') }}');
-}
+    <style>
+        .template {
+            display: none;
+        }
 
-.whitelist-target-entry.pending::after {
-    background-image: url('{{ asset('bundles/frontend/img/pending.png') }}');
-}
+        .whitelist-target-entry::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            height: 50px;
+            width: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
 
-.whitelist-target-entry.denied::after {
-    background-image: url('{{ asset('bundles/frontend/img/denied.png') }}');
-}
-.links{
-    margin-top:         10px;
-}
-.domain{
-    margin:             0 5px 0 0;
-    display: inline;
-}
-.card-content .header{
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
-    align-items: center;
+        .whitelist-target-entry.allowed::after {
+            background-image: url('{{ asset('bundles/frontend/img/allowed.png') }}');
+        }
 
-    padding-right: 60px;
-}
-.decision-btns{
-    padding:            10px;
-}
-.allowed{
-    background:  #c8e6c9;
-}
-.denied{
-    background:  #ef9a9a;
-}
-.pending{
-    background:  #b3e5fc;
-}
-.allowed .decision-btns .allow{
-    display: none;
-}
-.denied .decision-btns .deny{
-    display: none;
-}
-</style>
+        .whitelist-target-entry.pending::after {
+            background-image: url('{{ asset('bundles/frontend/img/pending.png') }}');
+        }
+
+        .whitelist-target-entry.denied::after {
+            background-image: url('{{ asset('bundles/frontend/img/denied.png') }}');
+        }
+
+        .links {
+            margin-top: 10px;
+        }
+
+        .domain {
+            margin: 0 5px 0 0;
+            display: inline;
+        }
+
+        .card-content .header {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-between;
+            align-items: center;
+
+            padding-right: 60px;
+        }
+
+        .collapsible {
+            border: none;
+            box-shadow: none;
+        }
+
+        .collapsible-header {
+            background-color: transparent;
+            border-bottom: none;
+
+        }
+
+        .collapsible-header.active .accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        .accordion-arrow {
+            transition: all 500ms ease;
+            transform: rotate(90deg);
+        }
+
+        .decision-btns {
+            padding: 10px;
+        }
+
+        .allowed {
+            background: #c8e6c9;
+        }
+
+        .denied {
+            background: #ef9a9a;
+        }
+
+        .pending {
+            background: #b3e5fc;
+        }
+
+        .allowed .decision-btns .allow {
+            display: none;
+        }
+
+        .denied .decision-btns .deny {
+            display: none;
+        }
+    </style>
 {% endblock %}
 {% block customScripts %}
-<script>
-    'use strict';
-    $(document).ready(function() {
-        //$('.collapsible').collapsible({accordion: false});
-        $('.allow').click(function(){
-            var state = 1;
-            $.post('{{ path('decide_for_white_list_request',{'id':2}) }}',{state: state, admin: 67890}, function(data){
+    <script>
+        'use strict';
+        $(document).ready(function () {
+            //$('.collapsible').collapsible({accordion: false});
+            $('.allow').click(function () {
+                var state = 1;
+                $.post('{{ path('decide_for_white_list_request',{'id':2}) }}', {
+                    state: state,
+                    admin: 67890
+                }, function (data) {
 
-            });
-        });
-        $('.deny').click(function(){
-            var state = 2;
-            $.post('{{ path('decide_for_white_list_request',{'id':2}) }}',{state: state, admin: 67890}, function(data){
-
-            });
-        });
-        $.get('{{ path('list_white_list_targetswhitelistTarget.all') }}', function (data) {
-            $.each(data, function (index, element) {
-
-                var targetTemplate = $('#whitelist-target-template').clone();
-                targetTemplate.removeAttr('id');
-                targetTemplate.removeClass('template');
-
-                targetTemplate.find('.domain').text(element.domain);
-                var stateClasses = ['pending', 'allowed', 'denied'];
-                targetTemplate.addClass(stateClasses[element.state]);
-
-                $.each(element.whitelist_requests, function (requestIndex, requestElement) {
-                    var requestTemplate = $('#whitelist-target-request-template').clone();
-                    requestTemplate.removeAttr('id');
-                    requestTemplate.removeClass('template');
-
-                    var formattedDate = new Date(requestElement.created);
-                    formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
-
-                    requestTemplate.find('.user').text(requestElement.user.username);
-                    requestTemplate.find('.reason').text(requestElement.reason);
-                    requestTemplate.find('.created').text(formattedDate);
-
-                    targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
                 });
-                $('.whitelist-target-list').append(targetTemplate);
-                //requestTemplate.delay(index*150).fadeIn(300);
             });
-        });
+            $('.deny').click(function () {
+                var state = 2;
+                $.post('{{ path('decide_for_white_list_request',{'id':2}) }}', {
+                    state: state,
+                    admin: 67890
+                }, function (data) {
 
-    });
-</script>
+                });
+            });
+            $.get('{{ path('list_white_list_targetswhitelistTarget.all') }}', function (data) {
+                $.each(data, function (index, element) {
+
+                    var targetTemplate = $('#whitelist-target-template').clone(true);
+                    targetTemplate.removeAttr('id');
+                    targetTemplate.removeClass('template');
+
+                    targetTemplate.find('.domain').text(element.domain);
+                    var stateClasses = ['pending', 'allowed', 'denied'];
+                    targetTemplate.addClass(stateClasses[element.state]);
+
+                    $.each(element.whitelist_requests, function (requestIndex, requestElement) {
+                        var requestTemplate = $('#whitelist-target-request-template').clone(true);
+                        requestTemplate.removeAttr('id');
+                        requestTemplate.removeClass('template');
+
+                        var formattedDate = new Date(requestElement.created);
+                        formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+
+                        requestTemplate.find('.user').text(requestElement.user.username);
+                        requestTemplate.find('.reason').text(requestElement.reason);
+                        requestTemplate.find('.created').text(formattedDate);
+
+                        targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
+                    });
+                    $('.whitelist-target-list').append(targetTemplate);
+                    //requestTemplate.delay(index*150).fadeIn(300);
+                });
+            });
+
+        });
+    </script>
 {% endblock %}
 {% block title %}
     <h1>Meine Whitelist-Anfragen</h1>
 {% endblock %}
 {% block mainContent %}
-<div class="whitelist-target-list container">
-
-    <div id="whitelist-target-template" class="whitelist-target-entry card template">
-        <div class="card-content">
-            <header class="header">
-                <h2 class="domain">Domain-Name</h2>
-                <div class="decision-btns">
-                    <div class="btn waves-effect waves-green light-green allow">Freigeben</div>
-                    <div class="btn waves-effect waves-red red darken-3 deny">Ablehnnen</div>
-                </div>
-            </header>
-            <div class="container">
+    <div class="whitelist-target-list container">
+        <div id="whitelist-target-template" class="whitelist-target-entry card template">
+            <div class="card-content">
                 <ul class="collapsible" data-collapsible="accordion">
                     <li>
-                        <div class="collapsible-header active">Requests</div>
-                        <div class="collapsible-body">
+                        <header class="header collapsible-header">
+                            <div class="material-icons accordion-arrow">navigation</div>
+                            <h2 class="domain">Domain-Name</h2>
+                            <div class="decision-btns">
+                                <div class="btn waves-effect waves-green light-green allow">Freigeben</div>
+                                <div class="btn waves-effect waves-red red darken-3 deny">Ablehnnen</div>
+                            </div>
+                        </header>
+                        <div class="container collapsible-body">
                             <table>
                                 <thead>
                                 <tr>
@@ -153,5 +188,5 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
 {% endblock %}
