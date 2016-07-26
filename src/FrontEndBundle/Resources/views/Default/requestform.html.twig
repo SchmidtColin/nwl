@@ -20,8 +20,8 @@
 {% endblock %}
 
 {% block customScripts %}
+    <script src="../../public/js/domainValidation.js"></script>
     <script>
-
         $(document).ready(function () {
             $('.modal-trigger').leanModal();
         });
@@ -32,7 +32,21 @@
             } else {
                 $("#sub").removeClass("disabled").prop('disabled', false);
             }
+            $parsedUrl = parseURL($("#domain").val());
+            if($parsedUrl === null || $parsedUrl.protocol.length <= 0){
+                $("#sub").addClass("disabled");
+                $('#sub').prop('disabled',true);
+            }
         }
+
+        $(function(){
+            $('#createForm').submit(function(){
+                if(parseURL($("#domain").val()).path === null){
+                    $('#domain').val += "/";
+                    return true;
+                }
+            });
+        });
     </script>
 {% endblock %}
 
@@ -47,7 +61,7 @@
 
     {% block mainContent %}
         <div id="container" class="container">
-            <form method="POST">
+            <form id="createForm" method="POST">
                 <div class="row">
                     <div class="input-field col s9 offset-s1">
                         <input id="domain" type="text" class="validate" name="domain"
