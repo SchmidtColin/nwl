@@ -51,6 +51,18 @@
 .domain{
     margin-top: 0;
 }
+.legend{
+    position:               fixed;
+    bottom:                 20px;
+    right:                  10px;
+
+}
+.legend .entry{
+    height:                 25px;
+    width:                  100%;
+
+    padding:                0 10px;
+}
 </style>
 {% endblock %}
 {% block customScripts %}
@@ -122,5 +134,10 @@ $(document).ready(function(){
         </div>
     </div>
 
+</div>
+<div class="legend card">
+    <div class="entry allowed"><span class="label">freigegeben</span></div>
+    <div class="entry denied"><span class="label">abgelehnt</span></div>
+    <div class="entry pending"><span class="label">steht aus</span></div>
 </div>
 {% endblock %}
