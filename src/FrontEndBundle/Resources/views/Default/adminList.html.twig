@@ -183,24 +183,22 @@ $(document).ready(function () {
 
     $('.allow-button').click(function (event) {
         event.stopPropagation();
-        var admin = 67890;
         var id = $(this).attr('data-id');
-        decideFor(id, 1, admin);
+        decideFor(id, 1);
     });
     $('.deny-button').click(function (event) {
         event.stopPropagation();
-        var admin = 67890;
         var id = $(this).attr('data-id');
-        decideFor(id, 2, admin);
+        decideFor(id, 2);
     });
 });
-function decideFor(id, state, admin) {
+function decideFor(id, state) {
     console.log(id+" "+admin);
     $.ajax({
         url: '/nwlProject/nwl/web/app_dev.php/api/whitelist-target/' + id,
         type: "POST",
         headers: {"apikey": apikey },
-        data: {state: state, admin: admin},
+        data: {state: state},
         success: function () {
             //update();
         },
