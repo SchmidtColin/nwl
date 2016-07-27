@@ -49,45 +49,66 @@
             } else {
                 $("#sub").removeClass("disabled").prop('disabled', false);
             }
+            if(!validateUserInput()){
+                $("#sub").addClass("disabled").prop('disabled', true);
+            }
         }
 
-        function urlFromStahl(url) {
+        function urlFromStahl(url){
             var parsedUrl = parseURL(url);
-            console.log(parsedUrl);
-            if (parsedUrl != null) {
+            if(parsedUrl != null){
                 var newUrl = url;
-                if (!parsedUrl.path) {
-                    newUrl += "/";
+                if(!parsedUrl.path){
+                    newUrl+= "/";
                 }
                 parsedUrl = parseURL(newUrl);
-                if (parsedUrl.subdomain === "www") {
+                if(parsedUrl.subdomain === "www"){
                     $("#domain").val(parsedUrl.parent_domain);
-                } else {
+                }else{
                     $("#domain").val(parsedUrl.domain);
                 }
             }
         }
-        function validUserUrl() {
+
+        function validateUserInput(){
             var url = $("#domain").val();
             var parsedUserUrl = parseURL(url);
-            var newUrl = url;
-            if (parsedUserUrl != null) {
-                if (parsedUserUrl.protocol.length <= 0) {
-                    newUrl = "http://" + newUrl;
+            if(parsedUserUrl != null){
+                if(parsedUserUrl.protocol.length <= 0){
+                    url = "http://"+url;
                 }
-                if (parsedUserUrl.path == null) {
-                    newUrl += "/";
+                if(parsedUserUrl.path == null){
+                    url += "/";
                 }
-                parsedUserUrl = parseURL(newUrl);
-                if (parsedUserUrl.subdomain === "www") {
+                parsedUserUrl = parseURL(url);
+
+                if(parsedUserUrl.host != "www" && parsedUserUrl.tld && parsedUserUrl.tld.length > 1 && /^[a-zA-Z\.]+$/.test(parsedUserUrl.tld)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+
+        function validUserUrl(){
+            var url = $("#domain").val();
+            var parsedUserUrl = parseURL(url);
+            if(parsedUserUrl != null){
+                if(parsedUserUrl.protocol.length <= 0){
+                    url = "http://"+url;
+                }
+                if(parsedUserUrl.path == null){
+                    url += "/";
+                }
+                parsedUserUrl = parseURL(url);
+                if(parsedUserUrl.subdomain === "www"){
                     $("#domain").val(parsedUserUrl.parent_domain);
-                } else {
+                }else{
                     $("#domain").val(parsedUserUrl.domain);
                 }
-            } else {
+            }else{
                 // Ungültige URL (Validierung failed (muss 1x Punkt haben und vor und nach dem Punkt etwas stehen haben)
             }
-
         }
 
     </script>
