@@ -35,17 +35,12 @@
         });
 
         function updateSubmit() {
-//            console.log(apikey);
-//            if ($("#domain").val() == '' || $("#reason").val() == '') {
-//                $("#sub").addClass("disabled").prop('disabled', true);
-//            } else {
-//                $("#sub").removeClass("disabled").prop('disabled', false);
-//            }
-//            $parsedUrl = parseURL($("#domain").val());
-//            if ($parsedUrl === null || $parsedUrl.protocol.length <= 0) {
-//                $("#sub").addClass("disabled");
-//                $('#sub').prop('disabled', true);
-//            }
+            console.log(apikey);
+            if ($("#domain").val() == '' || $("#reason").val() == '') {
+                $("#sub").addClass("disabled").prop('disabled', true);
+            } else {
+                $("#sub").removeClass("disabled").prop('disabled', false);
+            }
 
         }
 
@@ -64,24 +59,37 @@
 
         }
 
-        function optimizeDomain() {
-//            if (parseURL($("#domain").val()).path == null) {
-//                var zwischenSpeicher = $("#domain").val();
-//                $("#domain").val(zwischenSpeicher + "/");
-//                return true;
-//            }
+        function validateUserInput(){
+            var url = $("#domain").val();
+            var parsedUserUrl = parseURL(url);
+            if(parsedUserUrl != null){
+                if(parsedUserUrl.protocol.length <= 0){
+                    url = "http://"+url;
+                }
+                if(parsedUserUrl.path == null){
+                    url += "/";
+                }
+                parsedUserUrl = parseURL(url);
+
+                if(parsedUserUrl.host != "www" && parsedUserUrl.tld && parsedUserUrl.tld.length > 1 && /^[a-zA-Z\.]+$/.test(parsedUserUrl.tld)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+
         function validUserUrl(){
             var url = $("#domain").val();
             var parsedUserUrl = parseURL(url);
-            var newUrl = url;
             if(parsedUserUrl != null){
                 if(parsedUserUrl.protocol.length <= 0){
-                    newUrl = "http://"+newUrl;
+                    url = "http://"+url;
                 }
                 if(parsedUserUrl.path == null){
-                    newUrl += "/";
+                    url += "/";
                 }
-                parsedUserUrl = parseURL(newUrl);
+                parsedUserUrl = parseURL(url);
                 if(parsedUserUrl.subdomain === "www"){
                     $("#domain").val(parsedUserUrl.parent_domain);
                 }else{
