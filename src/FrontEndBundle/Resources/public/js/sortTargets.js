@@ -27,7 +27,7 @@ var sortTargets = function(targets) {
     });
 
     processed.sort(function(a, b) {
-        if (a.decision_date && b.decision.date) {
+        if (a.decision_date && b.decision_date) {
             if (a.decision_date > b.decision_date) return -1;
             if (a.decision_date < b.decision_date) return 1;
         }
