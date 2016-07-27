@@ -22,13 +22,21 @@
 {% block customScripts %}
     <script src="{{ asset('bundles/frontend/js/domainValidation.js') }}"></script>
     <script>
+        if (sessionStorage.getItem('url') == null) {
+            var url = '{{ url }}';
+        } else {
+            var url = sessionStorage.getItem('url');
+        }
+
         var apikey = localStorage.getItem('apikey');
+        sessionStorage.setItem('url', url);
         $(document).ready(function () {
-            console.log(apikey);
             $('.modal-trigger').leanModal();
             if (apikey == "null") {
-                $('#sub').addClass("disabled");
+                window.location.replace("../../login");
             } else {
+                console.log("URL: " + sessionStorage.getItem('url'));
+                urlFromStahl(sessionStorage.getItem('url'));
                 $('#headers').removeAttr("hidden");
                 $('#container').removeAttr("hidden");
             }
@@ -41,63 +49,45 @@
             } else {
                 $("#sub").removeClass("disabled").prop('disabled', false);
             }
-
         }
 
-        function urlFromStahl(url){
+        function urlFromStahl(url) {
             var parsedUrl = parseURL(url);
+            console.log(parsedUrl);
+            if (parsedUrl != null) {
+                var newUrl = url;
+                if (!parsedUrl.path) {
+                    newUrl += "/";
+                }
+                parsedUrl = parseURL(newUrl);
+                if (parsedUrl.subdomain === "www") {
+                    $("#domain").val(parsedUrl.parent_domain);
+                } else {
+                    $("#domain").val(parsedUrl.domain);
+                }
+            }
+        }
+        function validUserUrl() {
+            var url = $("#domain").val();
+            var parsedUserUrl = parseURL(url);
             var newUrl = url;
-            if(parsedUrl.path == null){
-                newUrl+= "/";
-            }
-            parsedUrl = parsedUrl(newUrl);
-            if(parsedUrl.subdomain === "www"){
-                $("#domain").val(parsedUrl.parent_domain);
-            }else{
-                $("#domain").val(parsedUrl.domain);
-            }
-
-        }
-
-        function validateUserInput(){
-            var url = $("#domain").val();
-            var parsedUserUrl = parseURL(url);
-            if(parsedUserUrl != null){
-                if(parsedUserUrl.protocol.length <= 0){
-                    url = "http://"+url;
+            if (parsedUserUrl != null) {
+                if (parsedUserUrl.protocol.length <= 0) {
+                    newUrl = "http://" + newUrl;
                 }
-                if(parsedUserUrl.path == null){
-                    url += "/";
+                if (parsedUserUrl.path == null) {
+                    newUrl += "/";
                 }
-                parsedUserUrl = parseURL(url);
-
-                if(parsedUserUrl.host != "www" && parsedUserUrl.tld && parsedUserUrl.tld.length > 1 && /^[a-zA-Z\.]+$/.test(parsedUserUrl.tld)){
-                    return true;
-                }else{
-                    return false;
-                }
-            }
-        }
-
-        function validUserUrl(){
-            var url = $("#domain").val();
-            var parsedUserUrl = parseURL(url);
-            if(parsedUserUrl != null){
-                if(parsedUserUrl.protocol.length <= 0){
-                    url = "http://"+url;
-                }
-                if(parsedUserUrl.path == null){
-                    url += "/";
-                }
-                parsedUserUrl = parseURL(url);
-                if(parsedUserUrl.subdomain === "www"){
+                parsedUserUrl = parseURL(newUrl);
+                if (parsedUserUrl.subdomain === "www") {
                     $("#domain").val(parsedUserUrl.parent_domain);
-                }else{
+                } else {
                     $("#domain").val(parsedUserUrl.domain);
                 }
-            }else{
+            } else {
                 // Ungültige URL (Validierung failed (muss 1x Punkt haben und vor und nach dem Punkt etwas stehen haben)
             }
+
         }
 
     </script>
@@ -121,7 +111,7 @@
                            oninput="updateSubmit()">
                     <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
                 </div>
-                <div class="input-field col s8 offset-s2">
+                <div class="input-field col s9 offset-s1">
                         <textarea id="reason" class="materialize-textarea" length="150" name="reason"
                                   oninput="updateSubmit()"></textarea>
                     <label for="reason"><i
@@ -131,7 +121,7 @@
             <div class="row">
                 <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
                 <button disabled="disabled" id="sub"
-                        class="waves-effect waves-light btn modal-trigger  col s2" href="#modal1">Los
+                        class="waves-effect waves-light btn modal-trigger disabled col s2" href="#modal1">Los
                 </button>
                 <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
                 <div id="modal1" class="modal">

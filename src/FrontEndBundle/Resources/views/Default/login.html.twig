@@ -22,25 +22,31 @@
     </style>
 {% endblock %}
 {% block customScripts %}
-<script>
-$(document).ready(function(){
+    <script>
+        $(document).ready(function () {
+            console.log(sessionStorage.getItem('url'));
+            $('form button').click(function (event) {
+                var params = $('form').serialize();
+                var username = $('#username').val();
+                console.log(username);
+                $.post('{{ path('loginsecurity.auth') }}', params, function (data) {
+                    if (null != data.token) {
+                        var apikey = data.token;
+                        localStorage.setItem('apikey', apikey);
+                        console.log(sessionStorage.getItem('url'));
+                        if (sessionStorage.getItem('url') == null) {
+                            window.open('./whitelist-request/' + username, '_self');
+                        } else {
+                            console.log(sessionStorage.getItem('url'));
+                            window.open('./whitelist-request/' + username + '/create', '_self');
+                        }
+                    }
+                });
+                event.preventDefault();
+            });
 
-    $('form button').click(function(event){
-        var params = $('form').serialize();
-        var username = $('#username').val();
-        console.log(username);
-        $.post('{{ path('loginsecurity.auth') }}', params, function (data) {
-            if (null != data.token) {
-                var apikey = data.token;
-                localStorage.setItem('apikey', apikey);
-                window.open('./whitelist-request/'+username, '_self');
-            }
         });
-        event.preventDefault();
-    });
-
-});
-</script>
+    </script>
 {% endblock %}
 
 {% block headerLinks %}{% endblock %}
@@ -55,25 +61,25 @@ $(document).ready(function(){
 {% endblock %}
 
 {% block mainContent %}
-<div class="container">
-    <form method="POST">
-        <div class="row">
-            <div class="input-field col s10 offset-s1">
-                <input id="username" type="text" class="validate" name="username">
-                <label for="username"><i class="material-icons left">account_circle</i>Benutzername</label>
+    <div class="container">
+        <form method="POST">
+            <div class="row">
+                <div class="input-field col s10 offset-s1">
+                    <input id="username" type="text" class="validate" name="username">
+                    <label for="username"><i class="material-icons left">account_circle</i>Benutzername</label>
+                </div>
+                <div class="input-field col s10 offset-s1">
+                    <input type="password" id="password" name="password" class="validate"/>
+                    <label for="password"><i class="material-icons left">lock</i>Passwort</label>
+                </div>
             </div>
-            <div class="input-field col s10 offset-s1">
-                <input type="password" id="password" name="password" class="validate"/>
-                <label for="password"><i class="material-icons left">lock</i>Passwort</label>
+            <div class="row">
+                <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
+                <button id="sub"
+                        class="waves-effect waves-light btn modal-trigger col s2" href="#modal1">Einloggen
+                </button>
+                <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
             </div>
-        </div>
-        <div class="row">
-            <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
-            <button id="sub"
-                    class="waves-effect waves-light btn modal-trigger col s2" href="#modal1">Einloggen
-            </button>
-            <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 {% endblock %}
