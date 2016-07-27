@@ -31,7 +31,7 @@ class DefaultController extends Controller
         $userService = $this->get('nwl.user');
         $user = $userService->getById($username);
 
-        $params = array('username'=>$username);
+        $params = array('username' => $username);
         $template = $userService->getTemplate($user);
         return $this->render($template, $params);
     }
@@ -47,7 +47,7 @@ class DefaultController extends Controller
         $whitelistRequest = new WhiteListRequest();
         $domain = $request->request->get('domain');
         $reason = $request->request->get('reason');
-
+        $givenUrl = $request->request->get('url');
 
         if ($domain != null && $reason != null) {
             $userService = $this->get('nwl.user');
@@ -67,7 +67,7 @@ class DefaultController extends Controller
             return $this->render($template, $params);
         }
 
-        return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username' => $username));
+        return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username' => $username, 'url' => $givenUrl));
     }
 
 

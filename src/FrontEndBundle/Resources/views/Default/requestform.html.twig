@@ -22,9 +22,24 @@
 {% block customScripts %}
     <script src="{{ asset('bundles/frontend/js/domainValidation.js') }}"></script>
     <script>
+        if (sessionStorage.getItem('url') == null) {
+            var url = '{{ url }}';
+        } else {
+            var url = sessionStorage.getItem('url');
+        }
+
         var apikey = localStorage.getItem('apikey');
+        sessionStorage.setItem('url', url);
         $(document).ready(function () {
             $('.modal-trigger').leanModal();
+            if (apikey == "null") {
+                window.location.replace("../../login");
+            } else {
+                console.log("URL: " + sessionStorage.getItem('url'));
+                urlFromStahl(sessionStorage.getItem('url'));
+                $('#headers').removeAttr("hidden");
+                $('#container').removeAttr("hidden");
+            }
         });
 
         function updateSubmit() {
@@ -34,27 +49,52 @@
             } else {
                 $("#sub").removeClass("disabled").prop('disabled', false);
             }
-            $parsedUrl = parseURL($("#domain").val());
-            if ($parsedUrl === null || $parsedUrl.protocol.length <= 0) {
-                $("#sub").addClass("disabled");
-                $('#sub').prop('disabled', true);
-            }
         }
 
-
-        function optimizeDomain() {
-            if (parseURL($("#domain").val()).path == null) {
-                var zwischenSpeicher = $("#domain").val();
-                $("#domain").val(zwischenSpeicher + "/");
-                return true;
+        function urlFromStahl(url) {
+            var parsedUrl = parseURL(url);
+            console.log(parsedUrl);
+            if (parsedUrl != null) {
+                var newUrl = url;
+                if (!parsedUrl.path) {
+                    newUrl += "/";
+                }
+                parsedUrl = parseURL(newUrl);
+                if (parsedUrl.subdomain === "www") {
+                    $("#domain").val(parsedUrl.parent_domain);
+                } else {
+                    $("#domain").val(parsedUrl.domain);
+                }
             }
+        }
+        function validUserUrl() {
+            var url = $("#domain").val();
+            var parsedUserUrl = parseURL(url);
+            var newUrl = url;
+            if (parsedUserUrl != null) {
+                if (parsedUserUrl.protocol.length <= 0) {
+                    newUrl = "http://" + newUrl;
+                }
+                if (parsedUserUrl.path == null) {
+                    newUrl += "/";
+                }
+                parsedUserUrl = parseURL(newUrl);
+                if (parsedUserUrl.subdomain === "www") {
+                    $("#domain").val(parsedUserUrl.parent_domain);
+                } else {
+                    $("#domain").val(parsedUserUrl.domain);
+                }
+            } else {
+                // Ungültige URL (Validierung failed (muss 1x Punkt haben und vor und nach dem Punkt etwas stehen haben)
+            }
+
         }
 
     </script>
 {% endblock %}
 
         {% block title %}
-            <div class="center-align">
+            <div id="headers" hidden="hidden" class="center-align">
                 <h3>Entsperren</h3>
                 <h5>Teilen Sie dem Administrator mit, welche Seite entsperrt werden soll und
                     warum: </h5>
@@ -63,45 +103,45 @@
         {% endblock %}
 
     {% block mainContent %}
-        <div id="container" class="container">
+        <div hidden="hidden" id="container" class="container">
         <form method="POST">
-                <div class="row">
-                    <div class="input-field col s9 offset-s1">
-                        <input id="domain" type="text" class="validate" name="domain"
-                               oninput="updateSubmit()">
-                        <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
-                    </div>
-                    <div class="input-field col s8 offset-s2">
+            <div class="row">
+                <div class="input-field col s9 offset-s1">
+                    <input id="domain" type="text" class="validate" name="domain"
+                           oninput="updateSubmit()">
+                    <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
+                </div>
+                <div class="input-field col s9 offset-s1">
                         <textarea id="reason" class="materialize-textarea" length="150" name="reason"
                                   oninput="updateSubmit()"></textarea>
-                        <label for="reason"><i
-                                    class="tiny material-icons left">chat_bubble_outline</i>Begründung</label>
+                    <label for="reason"><i
+                                class="tiny material-icons left">chat_bubble_outline</i>Begründung</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
+                <button disabled="disabled" id="sub"
+                        class="waves-effect waves-light btn modal-trigger disabled col s2" href="#modal1">Los
+                </button>
+                <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
+                <div id="modal1" class="modal">
+                    <div class="modal-content">
+                        <h4>Anfrage versenden</h4>
+                        <p>Durch Klicken auf "Bestätigen" wird Ihre Anfrage an den Admin gesenden.
+                            </br> Sie werden dann auf Ihre Übersicht weitergeleitet.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#!"
+                           class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
+                        <button class=" modal-action modal-close waves-effect waves-green btn-flat"
+                                onclick="validUserUrl()" type="submit"
+                                name="action">Bestätigen
+                        </button>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
-                    <button disabled="disabled" id="sub"
-                            class="waves-effect waves-light btn modal-trigger disabled col s2" href="#modal1">Los
-                    </button>
-                    <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
-                    <div id="modal1" class="modal">
-                        <div class="modal-content">
-                            <h4>Anfrage versenden</h4>
-                            <p>Durch Klicken auf "Bestätigen" wird Ihre Anfrage an den Admin gesenden.
-                                </br> Sie werden dann auf Ihre Übersicht weitergeleitet.
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            <a href="#!"
-                               class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
-                            <button class=" modal-action modal-close waves-effect waves-green btn-flat"
-                                    onclick="optimizeDomain()" type="submit"
-                                    name="action">Bestätigen
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
+            </div>
+        </form>
 
 
         <!-- action="{{ path('whitelist-request.list', {'username': username}) }}" -->
