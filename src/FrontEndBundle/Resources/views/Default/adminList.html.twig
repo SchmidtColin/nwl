@@ -88,6 +88,22 @@
 .pending {
     background: #b3e5fc;
 }
+
+.hr {
+    height: 12px;
+    border: 0;
+    margin-top: 50px;
+    box-shadow: inset 0 12px 12px -12px rgba(0, 0, 0, 0.5);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
 .allow-button, .deny-button, .open-button{
     display:                flex;
     flex-flow:              row nowrap;
@@ -106,6 +122,7 @@
 </style>
 {% endblock %}
 {% block customScripts %}
+    <script src="{{ asset('bundles/frontend/js/sortTargets.js') }}"></script>
 <script>
 'use strict';
 var apikey = localStorage.getItem('apikey');
@@ -116,51 +133,57 @@ $(document).ready(function () {
         type: "GET",
         headers: {"apikey": apikey },
         success: function (data) {
-            $.each(data, function (index, target) {
-
-                var targetTemplate = $('#whitelist-target-template').clone(true);
-                targetTemplate.removeAttr('id');
-                targetTemplate.removeClass('template');
-
-                var adminName;
-                if(target.decided_by){
-                    if(!target.decided_by.firstname&&!target.decided_by.lastname) {
-                        adminName = target.decided_by.firstname+" "+target.decided_by.lastname;
-                    }else{
-                        adminName = target.decided_by.username;
-                    }
-                }else{
-                    targetTemplate.find('.decided-by-container').hide();
-                }
-
-                targetTemplate.find('.domain').text(target.domain);
-                targetTemplate.find('.decided-by').text(adminName);
-                targetTemplate.addClass(stateClasses[target.state]);
-                targetTemplate.find('.allow-button').attr('data-id', target.id);
-                targetTemplate.find('.deny-button').attr('data-id', target.id);
-                targetTemplate.find('.dropdown-button').attr('data-activates','decision-buttons-'+target.id);
-                targetTemplate.find('.dropdown-content').attr('id','decision-buttons-'+target.id);
-
-                $.each(target.whitelist_requests, function (requestIndex, request) {
-                    var requestTemplate = $('#whitelist-target-request-template').clone();
-                    requestTemplate.removeAttr('id');
-                    requestTemplate.removeClass('template');
-
-                    var formattedDate = new Date(request.created);
-                    formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
-
-                    requestTemplate.find('.user').text(request.user.username);
-                    requestTemplate.find('.reason').text(request.reason);
-                    requestTemplate.find('.created').text(formattedDate);
-
-                    targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
-                });
-
-                $('.whitelist-target-list').append(targetTemplate);
-                //requestTemplate.delay(index*150).fadeIn(300);
-            });
+            data = sortTargets(data);
+            insertTargets(data.pending, '#whitelist-requests-pending');
+            insertTargets(data.processed, '#whitelist-requests-done');
         }
     });
+
+    function insertTargets(data, elementSelector) {
+        $.each(data, function (index, target) {
+
+            var targetTemplate = $('#whitelist-target-template').clone(true);
+            targetTemplate.removeAttr('id');
+            targetTemplate.removeClass('template');
+
+            var adminName;
+            if(target.decided_by){
+                if(!target.decided_by.firstname&&!target.decided_by.lastname) {
+                    adminName = target.decided_by.firstname+" "+target.decided_by.lastname;
+                }else{
+                    adminName = target.decided_by.username;
+                }
+            }else{
+                targetTemplate.find('.decided-by-container').hide();
+            }
+
+            targetTemplate.find('.domain').text(target.domain);
+            targetTemplate.find('.decided-by').text(adminName);
+            targetTemplate.addClass(stateClasses[target.state]);
+            targetTemplate.find('.allow-button').attr('data-id', target.id);
+            targetTemplate.find('.deny-button').attr('data-id', target.id);
+            targetTemplate.find('.dropdown-button').attr('data-activates','decision-buttons-'+target.id);
+            targetTemplate.find('.dropdown-content').attr('id','decision-buttons-'+target.id);
+
+            $.each(target.whitelist_requests, function (requestIndex, request) {
+                var requestTemplate = $('#whitelist-target-request-template').clone();
+                requestTemplate.removeAttr('id');
+                requestTemplate.removeClass('template');
+
+                var formattedDate = new Date(request.created);
+                formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+
+                requestTemplate.find('.user').text(request.user.username);
+                requestTemplate.find('.reason').text(request.reason);
+                requestTemplate.find('.created').text(formattedDate);
+
+                targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
+            });
+
+            $(elementSelector).append(targetTemplate);
+            //requestTemplate.delay(index*150).fadeIn(300);
+        });
+    }
 
     $('.decision-btns').click(function(event){
         event.stopPropagation();
@@ -274,5 +297,13 @@ function update(btn) {
             </ul>
         </div>
     </div>
+
+    <section id="whitelist-requests-pending">
+
+    </section>
+    <hr>
+    <section id="whitelist-requests-done">
+
+    </section>
 </div>
 {% endblock %}
