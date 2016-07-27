@@ -87,7 +87,8 @@ var apikey = localStorage.getItem('apikey');
 var stateClasses = ['pending', 'allowed', 'denied'];
 $(document).ready(function() {
     //$('.collapsible').collapsible({accordion: false});
-    $('.allow-btn').click(function(){
+    $('.allow-btn').click(function(event){
+        event.stopPropagation();
         var element = $(this);
         var state = 1;
         var admin = 67890;
@@ -104,7 +105,8 @@ $(document).ready(function() {
             dataType:"json"
         });
     });
-    $('.deny-btn').click(function(){
+    $('.deny-btn').click(function(event){
+        event.stopPropagation();
         var element = $(this);
         var state = 2;
         var admin = 67890;
