@@ -5,7 +5,8 @@
 .template {
     display: none;
 }
-.whitelist-target-entry::after{
+
+.whitelist-target-entry::after {
     content: "";
     position: absolute;
     top: 20px;
@@ -15,7 +16,8 @@
     background-size: contain;
     background-repeat: no-repeat;
 }
-.whitelist-target-entry.allowed::after{
+
+.whitelist-target-entry.allowed::after {
     background-image: url('{{ asset('bundles/frontend/img/allowed.png') }}');
 }
 
@@ -26,14 +28,12 @@
 .whitelist-target-entry.denied::after {
     background-image: url('{{ asset('bundles/frontend/img/denied.png') }}');
 }
-.links{
-    margin-top:         10px;
-}
-.domain{
-    margin:             0 5px 0 0;
+.domain {
+    margin: 0 5px 0 0;
     display: inline;
 }
-.card-content .header{
+
+.card-content .header {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
@@ -60,22 +60,39 @@
 .collapsible-header.active .accordion-arrow {
     transform: rotate(180deg);
 }
-.decision-btns{
-    padding:            10px;
+.decision{
+    display:                flex;
+    flex-flow:              row nowrap;
+    justify-content:        center;
+    align-items:            center;
 }
-.allowed{
-    background:  #c8e6c9;
+.decision-btns {
+
 }
-.denied{
-    background:  #ef9a9a;
+.allowed {
+    background: #c8e6c9;
 }
-.pending{
-    background:  #b3e5fc;
+
+.denied {
+    background: #ef9a9a;
 }
-.allowed .decision-btns .allow-btn{
+
+.pending {
+    background: #b3e5fc;
+}
+.allow-button, .deny-button, .open-button{
+    display:                flex;
+    flex-flow:              row nowrap;
+    justify-content:        center;
+    align-items:            center;
+}
+.open-button i,.allow-button i,.deny-button i{
+    margin: 0;
+}
+.allowed .allow-button {
     display: none;
 }
-.denied .decision-btns .deny-btn{
+.denied .deny-button {
     display: none;
 }
 </style>
@@ -85,43 +102,11 @@
 'use strict';
 var apikey = localStorage.getItem('apikey');
 var stateClasses = ['pending', 'allowed', 'denied'];
-$(document).ready(function() {
-    //$('.collapsible').collapsible({accordion: false});
-    $('.allow-btn').click(function(event){
-        event.stopPropagation();
-        var element = $(this);
-        var state = 1;
-        var admin = 67890;
-        console.log(apikey);
-        var id = element.attr('data-id');
-        $.ajax({
-            url:'/nwlProject/nwl/web/app_dev.php/api/whitelist-target/'+id,
-            type:"POST",
-            headers: {
-                "apikey" : apikey
-            },
-            data:{state: state, admin: admin},
-            success: function(){ update(element); },
-            dataType:"json"
-        });
-    });
-    $('.deny-btn').click(function(event){
-        event.stopPropagation();
-        var element = $(this);
-        var state = 2;
-        var admin = 67890;
-        var id = element.attr('data-id');
-        $.post('/nwlProject/nwl/web/app_dev.php/api/whitelist-target/'+id,{state: state, admin: admin}, function(){
-            update(element);
-        });
-    });
-
+$(document).ready(function () {
     $.ajax({
         url: '{{ path('list_white_list_targetswhitelistTarget.all') }}',
         type: "GET",
-        headers: {
-            "apikey": apikey
-        },
+        headers: {"apikey": apikey },
         success: function (data) {
             $.each(data, function (index, target) {
 
@@ -129,10 +114,20 @@ $(document).ready(function() {
                 targetTemplate.removeAttr('id');
                 targetTemplate.removeClass('template');
 
+                var adminName;
+                if(!target.decided_by.firstname&&!target.decided_by.lastname) {
+                    adminName = target.decided_by.firstname+" "+target.decided_by.lastname;
+                }else{
+                    adminName = target.decided_by.username;
+                }
+
                 targetTemplate.find('.domain').text(target.domain);
+                targetTemplate.find('.decidedBy').text(adminName);
                 targetTemplate.addClass(stateClasses[target.state]);
-                targetTemplate.find('.allow-btn').attr('data-id', target.id);
-                targetTemplate.find('.deny-btn').attr('data-id', target.id);
+                targetTemplate.find('.allow-button').attr('data-id', target.id);
+                targetTemplate.find('.deny-button').attr('data-id', target.id);
+                targetTemplate.find('.dropdown-button').attr('data-activates','decision-buttons-'+target.id);
+                targetTemplate.find('.dropdown-content').attr('id','decision-buttons-'+target.id);
 
                 $.each(target.whitelist_requests, function (requestIndex, request) {
                     var requestTemplate = $('#whitelist-target-request-template').clone();
@@ -148,16 +143,59 @@ $(document).ready(function() {
 
                     targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
                 });
-                $('.whitelist-target-list').append(targetTemplate);
 
+                $('.whitelist-target-list').append(targetTemplate);
                 //requestTemplate.delay(index*150).fadeIn(300);
             });
         }
     });
 
+    $('.decision-btns').click(function(event){
+        event.stopPropagation();
+        var isDropDownOpen = $(this).find('.dropdown-content').is(':visible');
+        if(isDropDownOpen == true){
+            $(this).find('.dropdown-button').dropdown('open');
+        }else{
+            $(this).find('.dropdown-button').dropdown('close');
+        }
+    });
+    $('.dropdown-button').dropdown({
+        inDuration: 300,
+        outDuration: 225,
+        constrain_width: false, // Does not change width of dropdown to that of the activator
+        hover: false, // Activate on hover
+        gutter: 0, // Spacing from edge
+        belowOrigin: true, // Displays dropdown below the button
+        alignment: 'center' // Displays dropdown with edge aligned to the left of button
+    });
+
+    $('.allow-button').click(function (event) {
+        event.stopPropagation();
+        var admin = 67890;
+        var id = $(this).attr('data-id');
+        decideFor(id, 1, admin);
+    });
+    $('.deny-button').click(function (event) {
+        event.stopPropagation();
+        var admin = 67890;
+        var id = $(this).attr('data-id');
+        decideFor(id, 2, admin);
+    });
 });
-function update(btn)
-{
+function decideFor(id, state, admin) {
+    console.log(id+" "+admin);
+    $.ajax({
+        url: '/nwlProject/nwl/web/app_dev.php/api/whitelist-target/' + id,
+        type: "POST",
+        headers: {"apikey": apikey },
+        data: {state: state, admin: admin},
+        success: function () {
+            //update();
+        },
+        dataType: "json"
+    });
+}
+function update(btn) {
     console.log(btn);
     var targetEntry = btn.parent().parent().parent().parent();
     console.log(targetEntry);
@@ -165,7 +203,7 @@ function update(btn)
 </script>
 {% endblock %}
 {% block title %}
-    <h1>Meine Whitelist-Anfragen</h1>
+    <h1>Alle Whitelist-Anfragen</h1>
 {% endblock %}
 {% block mainContent %}
 <div class="whitelist-target-list container">
@@ -174,42 +212,49 @@ function update(btn)
         <div class="card-content">
             <ul class="collapsible" data-collapsible="accordion">
                 <li>
-            <header class="header collapsible-header">
-                <div class="material-icons accordion-arrow">navigation</div>
-                <h2 class="domain">Domain-Name</h2>
-                <div class="decision-btns">
-                    <div class="btn waves-effect waves-green light-green allow-btn">Freigeben</div>
-                    <div class="btn waves-effect waves-red red darken-3 deny-btn">Ablehnnen</div>
-                </div>
-            </header>
-            <div class="container collapsible-body">
+                    <header class="header collapsible-header">
+                        <div class="material-icons accordion-arrow">navigation</div>
+                        <h2 class="domain">Domain-Name</h2>
 
-
-
-
-
-                            <table>
-                                <thead>
-                                <tr>
-                                    <th class="user">Benutzer</th>
-                                    <th class="reason">Grund</th>
-                                    <th class="created">Erstellt</th>
-                                </tr>
-                                </thead>
-                                <tbody class="whitelist-target-request-table">
-                                <tr id="whitelist-target-request-template" class="template">
-                                    <th class="user">User</th>
-                                    <th class="reason">Reason</th>
-                                    <th class="created">Created</th>
-                                </tr>
-                                </tbody>
-                            </table>
-
-
-
-
-
-            </div>
+                        <div class="decision">
+                            <div class="decidedBy"></div>
+                            <div class="decision-btns">
+                                <a class='dropdown-button btn-floating btn-large waves-effect waves-light open-button'
+                                   href='#' data-activates='decision-buttons'>
+                                    <i class="material-icons">menu</i>
+                                </a>
+                                <ul id='decision-buttons' class='dropdown-content'>
+                                    <li>
+                                       <div></div>
+                                    </li>
+                                    <li class="waves-effect waves-green light-green allow-button">
+                                            <i class="material-icons text-blue">done</i>
+                                    </li>
+                                    <li class="waves-effect waves-red red darken-3 deny-button">
+                                        <i class="material-icons">not_interested</i>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="container collapsible-body">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th class="user">Benutzer</th>
+                                <th class="reason">Grund</th>
+                                <th class="created">Erstellt</th>
+                            </tr>
+                            </thead>
+                            <tbody class="whitelist-target-request-table">
+                            <tr id="whitelist-target-request-template" class="template">
+                                <td class="user">User</td>
+                                <td class="reason">Reason</td>
+                                <td class="created">Created</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </li>
             </ul>
         </div>

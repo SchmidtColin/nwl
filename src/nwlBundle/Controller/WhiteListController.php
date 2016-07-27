@@ -50,8 +50,12 @@ class WhiteListController extends FOSRestController
     {
         $userService = $this->get('nwl.user');
         $apikey = $request->headers->get('apikey');
+        if(null == $apikey)
+        {
+            return new Response('API-Key not found, please authorize', 401);
+        }
         if(!$userService->isApiKeyForAdmin($apikey)){
-            return new Response('Invalid APIKEY', 401);
+            return new Response('Invalid API-Key for Interaction', 403);
         }
         $whiteListService = $this->get('nwl.whitelist');
         $whiteListTargetDTOs = $whiteListService->findAllWhiteListTargets();
@@ -160,8 +164,8 @@ class WhiteListController extends FOSRestController
      *     section="WhiteListTarget",
      *     description="allows or denies permission for the Domain of the Whitelist-Target with {id}",
      *     parameters={
-     *     {"name"="state", "dataType"="integer", "required"=true, "description"="state of the decision - allow or deny"},
-     *     {"name"="admin", "dataType"="integer", "required"=true, "description"="username(id) of the admin"}}
+     *     {"name"="state", "dataType"="integer", "required"=true, "description"="state of the decision - allow or deny"}
+     *     }
      * )
      * @param Request $request
      * @param int $id
@@ -172,10 +176,10 @@ class WhiteListController extends FOSRestController
         $userService = $this->get('nwl.user');
         $whiteListTarget = $this->getDoctrine()->getRepository('nwlBundle:WhiteListTarget')->find($id);
         $state = $request->request->get('state');
-        $adminParam = $request->request->get('admin');
-        $admin = $userService->getById($adminParam);
+        $apikey = $request->headers->get('apikey');
+        $admin = $userService->getUserByApiKey($apikey);
 
-        if(null === $whiteListTarget || null === $adminParam || null === $state) {
+        if(null === $whiteListTarget || null === $admin || null === $state) {
             return $this->view("The given paramters for deciding the state are not valid.", 422);
         }
         $whiteListTarget->setState($state);

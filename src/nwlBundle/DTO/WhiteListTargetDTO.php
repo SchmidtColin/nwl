@@ -9,6 +9,7 @@
 namespace nwlBundle\DTO;
 
 
+use nwlBundle\Entity\User;
 use nwlBundle\Entity\WhiteListRequest;
 
 class WhiteListTargetDTO
@@ -29,9 +30,14 @@ class WhiteListTargetDTO
     private $state;
 
     /**
+     * @var User
+     */
+    private $decidedBy;
+    /**
      * @var WhiteListRequest[]
      */
     private $whitelistRequests;
+
 
     /**
      * @return mixed
@@ -48,8 +54,6 @@ class WhiteListTargetDTO
     {
         $this->id = $id;
     }
-
-
 
     /**
      * @return mixed
@@ -84,6 +88,22 @@ class WhiteListTargetDTO
     }
 
     /**
+     * @return User
+     */
+    public function getDecidedBy()
+    {
+        return $this->decidedBy;
+    }
+
+    /**
+     * @param User $decidedBy
+     */
+    public function setDecidedBy($decidedBy)
+    {
+        $this->decidedBy = $decidedBy;
+    }
+
+    /**
      * @return mixed
      */
     public function getWhitelistRequests()
@@ -98,7 +118,4 @@ class WhiteListTargetDTO
     {
         $this->whitelistRequests = $whitelistRequests;
     }
-
-
-
 }

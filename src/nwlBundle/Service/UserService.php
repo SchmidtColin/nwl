@@ -62,8 +62,17 @@ class UserService
     public function isApiKeyForAdmin($apikey)
     {
         /** @var User $user */
-        $user = $userRepo = $this->em->getRepository('nwlBundle:User')->findOneBy(array('apikey' => $apikey));
+        $user = $this->em->getRepository('nwlBundle:User')->findOneBy(array('apikey' => $apikey));
         return $user->getAdmin();
+    }
+
+    /**
+     * @param $apikey
+     * @return null | User
+     */
+    public function getUserByApiKey($apikey)
+    {
+        return $this->em->getRepository('nwlBundle:User')->findOneBy(array('apikey' => $apikey));
     }
 
     /**
