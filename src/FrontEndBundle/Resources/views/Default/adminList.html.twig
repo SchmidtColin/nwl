@@ -130,6 +130,7 @@ $(document).ready(function () {
             data = sortTargets(data);
             insertTargets(data.pending, '#whitelist-requests-pending');
             insertTargets(data.processed, '#whitelist-requests-done');
+            $('.decision-btns').trigger('click');
         }
     });
 
