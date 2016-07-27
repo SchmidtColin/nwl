@@ -34,19 +34,42 @@
             } else {
                 $("#sub").removeClass("disabled").prop('disabled', false);
             }
-            $parsedUrl = parseURL($("#domain").val());
-            if ($parsedUrl === null || $parsedUrl.protocol.length <= 0) {
-                $("#sub").addClass("disabled");
-                $('#sub').prop('disabled', true);
-            }
         }
 
+        function urlFromStahl(url){
+            var parsedUrl = parseURL(url);
+            var newUrl = url;
+            if(parsedUrl.path == null){
+                newUrl+= "/";
+            }
+            parsedUrl = parsedUrl(newUrl);
+            if(parsedUrl.subdomain === "www"){
+                $("#domain").val(parsedUrl.parent_domain);
+            }else{
+                $("#domain").val(parsedUrl.domain);
+            }
 
-        function optimizeDomain() {
-            if (parseURL($("#domain").val()).path == null) {
-                var zwischenSpeicher = $("#domain").val();
-                $("#domain").val(zwischenSpeicher + "/");
-                return true;
+        }
+
+        function validUserUrl(){
+            var url = $("#domain").val();
+            var parsedUserUrl = parseURL(url);
+            var newUrl = url;
+            if(parsedUserUrl != null){
+                if(parsedUserUrl.protocol.length <= 0){
+                    newUrl = "http://"+newUrl;
+                }
+                if(parsedUserUrl.path == null){
+                    newUrl += "/";
+                }
+                parsedUserUrl = parseURL(newUrl);
+                if(parsedUserUrl.subdomain === "www"){
+                    $("#domain").val(parsedUserUrl.parent_domain);
+                }else{
+                    $("#domain").val(parsedUserUrl.domain);
+                }
+            }else{
+                // Ungültige URL (Validierung failed (muss 1x Punkt haben und vor und nach dem Punkt etwas stehen haben)
             }
         }
 
@@ -95,7 +118,7 @@
                             <a href="#!"
                                class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
                             <button class=" modal-action modal-close waves-effect waves-green btn-flat"
-                                    onclick="optimizeDomain()" type="submit"
+                                    onclick="validUserUrl()" type="submit"
                                     name="action">Bestätigen
                             </button>
                         </div>
