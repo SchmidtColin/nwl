@@ -19,16 +19,18 @@
         .dummy {
             visibility: hidden;
         }
-        .button-container{
-            display:            flex;
-            flex-flow:          row nowrap;
-            justify-content:    center;
-            align-items:        center;
-            padding:            10px 20px;
+
+        .button-container {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 20px;
         }
-        @media all and (max-width: 449px){
-            .button-container button{
-                width:  100%;
+
+        @media all and (max-width: 449px) {
+            .button-container button {
+                width: 100%;
             }
         }
     </style>
@@ -36,12 +38,16 @@
 {% block customScripts %}
     <script>
         var user = sessionStorage.getItem('user');
-        if(user != null){
+        console.log(user);
+        if (user != null) {
             sessionStorage.setItem('user', null);
         }
         $(document).ready(function () {
-            console.log(sessionStorage.getItem('url'));
             $('#username').val(user);
+            $('#username').focus();
+            if ($('#username').val())
+                $('#password').focus();
+            Materialize.update()
 
             $('form button').click(function (event) {
                 var params = $('form').serialize();
@@ -81,15 +87,16 @@
             <div class="row">
                 <div class="input-field col s10 offset-s1">
                     <input id="username" type="text" class="validate" name="username">
-                    <label for="username"><i class="material-icons left">account_circle</i>Benutzername</label>
+                    <label id="userLabel" for="username"><i
+                                class="material-icons left">account_circle</i>Benutzername</label>
                 </div>
                 <div class="input-field col s10 offset-s1">
                     <input type="password" id="password" name="password" class="validate"/>
-                    <label for="password"><i class="material-icons left">lock</i>Passwort</label>
+                    <label id="passwordLabel" for="password"><i class="material-icons left">lock</i>Passwort</label>
                 </div>
             </div>
             <div class="button-container">
-                <button id="sub"
+                <button id="sub" style="background-color: #6882A2"
                         class="waves-effect waves-light btn modal-trigger col s2" href="#modal1">Einloggen
                 </button>
             </div>
