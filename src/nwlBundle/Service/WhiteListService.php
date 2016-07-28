@@ -17,6 +17,13 @@ use nwlBundle\DTO\WhiteListTargetDTO;
 
 class WhiteListService
 {
+
+    const AGE_NEW  = 0;
+    const AGE_ALL  = 1;
+    const AGE_OLD = 2;
+
+    const PAST_THIRTY_DAYS = 30;
+
     /**
      * @var EntityManagerInterface
      */
@@ -32,12 +39,25 @@ class WhiteListService
     }
 
     /**
-     * @return WhiteListTargetDTO[]
+     * @param $age integer
+     * @return \nwlBundle\DTO\WhiteListTargetDTO[]
      */
-    public function findAllWhiteListTargets()
+    public function findAllWhiteListTargets($age = self::AGE_ALL)
     {
         $targetDTOArray = array();
-        $targets = $this->em->getRepository('nwlBundle:WhiteListTarget')->findAll();
+        switch ($age) {
+            case self::AGE_NEW:
+                $targets = $this->em->getRepository('nwlBundle:WhiteListTarget')->getByDate(self::PAST_THIRTY_DAYS);
+                break;
+            case self::AGE_OLD:
+                $targets = $this->em->getRepository('nwlBundle:WhiteListTarget')->getOldByDate(self::PAST_THIRTY_DAYS);
+                break;
+            case self::AGE_ALL:
+            Default:
+                $targets = $this->em->getRepository('nwlBundle:WhiteListTarget')->findAll();
+        }
+
+
         foreach($targets as $target)
         {
             $targetDTO = new WhiteListTargetDTO();

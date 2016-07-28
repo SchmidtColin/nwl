@@ -2,8 +2,8 @@
 {% block siteTitle %}Alle Whitelist Request{% endblock %}
 {% block customStyles %}
 
-    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+<script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 <style>
 .template {
     display: none !important;
@@ -176,7 +176,7 @@ $(document).ready(function () {
     if (apikey == "null")
         window.open('/nwl/web/app_dev.php/frontend/login', '_self');
     $.ajax({
-        url: '{{ path('list_white_list_targetswhitelistTarget.all') }}',
+        url: '{{ path('list_white_list_targetswhitelistTarget.all', {'age' : 0}) }}',
         type: "GET",
         headers: {"apikey": apikey },
         success: function (data) {
@@ -245,6 +245,21 @@ $(document).ready(function () {
             //requestTemplate.delay(index*150).fadeIn(300);
         });
     }
+
+    $('#oldRequests').click(function(event) {
+        if (apikey == "null")
+            window.open('/nwl/web/app_dev.php/frontend/login', '_self');
+        $.ajax({
+            url: '{{ path('list_white_list_targetswhitelistTarget.all', {'age' : 2}) }}',
+            type: "GET",
+            headers: {"apikey": apikey },
+            success: function (data) {
+                data = sortTargets(data);
+                insertTargets(data.processed,'#old-whitelist-requests-done');
+            }
+        });
+
+    });
 
     $('.decision-btns').click(function(event) {
         event.stopPropagation();
@@ -363,6 +378,14 @@ function update(btn) {
     <hr>
     <section id="whitelist-requests-done">
 
+    </section>
+    <hr>
+    <section id="old-whitelist-requests-done">
+    <div class="button-container">
+        <button id="oldRequests"
+                class="waves-effect waves-light btn modal-trigger col s2" href="#modal1">Alte Request Anzeigen
+        </button>
+    </div>
     </section>
 </div>
 {% endblock %}

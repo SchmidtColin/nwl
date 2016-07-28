@@ -16,6 +16,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use nwlBundle\Entity\WhiteListRequest;
 use nwlBundle\Entity\WhiteListTarget;
+use nwlBundle\Service\WhiteListService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints\DateTime;
@@ -42,13 +43,16 @@ class WhiteListController extends FOSRestController
 
 
     /**
-     * @Get(path="/whitelist-target", name="whitelistTarget.all")
+     * @Get(path="/{age}/whitelist-target", name="whitelistTarget.all")
      * @ApiDoc(
      *     section="WhiteListTarget",
      *     description="list of all WhiteListTargets"
      * )
+     * @param Request $request
+     * @param $age
+     * @return \FOS\RestBundle\View\View|Response
      */
-    public function listWhiteListTargetsAction(Request $request)
+    public function listWhiteListTargetsAction(Request $request, $age = WhiteListService::AGE_NEW)
     {
         $userService = $this->get('nwl.user');
         $apikey = $request->headers->get('apikey');
@@ -60,7 +64,7 @@ class WhiteListController extends FOSRestController
             return new Response('Invalid API-Key for Interaction', 403);
         }
         $whiteListService = $this->get('nwl.whitelist');
-        $whiteListTargetDTOs = $whiteListService->findAllWhiteListTargets();
+        $whiteListTargetDTOs = $whiteListService->findAllWhiteListTargets($age);
         $view = $this->view($whiteListTargetDTOs);
         //$context = SerializationContext::create()->setGroups(array('Default','target'));
         $view->getContext()->setGroups(array('Default','target'));
