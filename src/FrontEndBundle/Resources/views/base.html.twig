@@ -27,7 +27,11 @@
             color: #505050;
         }
 
-        .logo-img {
+        .brand-logo{
+            height: 100%;
+        }
+
+        .logo-img{
             height: 100%;
         }
 
@@ -50,27 +54,37 @@
         .input-field label {
             color: #6882A2;
         }
+
         /* label focus color */
         .input-field input[type=text]:focus + label {
             color: #6882A2;
         }
+
         /* label underline focus color */
         .input-field input[type=text]:focus {
             border-bottom: 1px solid #6882A2;
             box-shadow: 0 1px 0 0 #6882A2;
         }
+
         /* valid color */
         .input-field input[type=text].valid {
             border-bottom: 1px solid #6882A2;
             box-shadow: 0 1px 0 0 #6882A2;
         }
+
         /* invalid color */
         .input-field input[type=text].invalid {
             border-bottom: 1px solid #6882A2;
             box-shadow: 0 1px 0 0 #6882A2;
         }
+
         /* icon prefix focus color */
         .input-field .prefix.active {
+            color: #6882A2;
+        }
+
+        /* label color */
+        .textarea label {
             color: #6882A2;
         }
 
@@ -107,11 +121,14 @@
     <nav>
         <div class="nav-wrapper grey lighten-3">
             <div class="brand-logo " style="margin-left: 1%; margin-top: 1px">
-                <a href="#" class="brand-logo"><img class="logo-img" src="{{ asset('bundles/frontend/img/LogoAusbildung.png') }}"
-                                                    alt="LogoAusbildung-Logo" style="padding-bottom: 15px; padding-top: 15px" /></a>
+                <a href="#" class="brand-logo"><img class="logo-img"
+                                                    src="{{ asset('bundles/frontend/img/LogoAusbildung.png') }}"
+                                                    alt="LogoAusbildung-Logo"
+                                                    style="padding-bottom: 15px; padding-top: 15px"/></a>
             </div>
             {% block headerLinks %}
-                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons" style="color: #6882A2">menu</i></a>
+                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons"
+                                                                                    style="color: #6882A2">menu</i></a>
                 <ul class="right hide-on-med-and-down ">
                     <li><a class="waves-effect waves-light black-text"
                            href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
