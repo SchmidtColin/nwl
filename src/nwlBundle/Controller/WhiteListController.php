@@ -183,14 +183,13 @@ class WhiteListController extends FOSRestController
             'subdomain'=>'',
             'host'=>''
         );
-
         $protocol_i = strrpos($domain,'://');
         $parsed_url['protocol'] = $protocol_i;
         $remaining_url = substr($domain,$protocol_i+3,strlen($domain));
         $domain_i = strpos($remaining_url,'/');
         $domain_i = $domain_i == -1 ? strlen($remaining_url) -1 : $domain_i;
-        $parsed_url['domain'] = substr($remaining_url,0,$domain_i); // http wird angefügt... und http:// vorne ist immernoch da! -.-
-        $parsed_url['path'] = $domain_i == -1 || $domain_i + 1 == strlen($remaining_url) ? null : substr($remaining_url,$domain_i+1,strlen($remaining_url)); // hier fügt er HTTP hinzu o.o WHY!
+        $parsed_url['domain'] = substr($remaining_url,0,$domain_i);
+        $parsed_url['path'] = $domain_i == -1 || $domain_i + 1 == strlen($remaining_url) ? null : substr($remaining_url,$domain_i+1,strlen($remaining_url));
         $domain_parts = explode(".",$parsed_url['domain']);
         switch (sizeof($domain_parts)){
             case 2:
@@ -251,7 +250,37 @@ class WhiteListController extends FOSRestController
         $whiteListTarget->setState($state);
         $whiteListTarget->setDecidedBy($admin);
 
+        $stateArgument = $state == 1 ? '-dw' : '-db';
+        $path = $_SERVER["DOCUMENT_ROOT"];
+        $cmd = $path.'/plink.exe -pw abc123! -ssh "test@192.168.1.16" /home/test/freigeben.sh '.$stateArgument.' '.$whiteListTarget->getDomain();
+
         $this->get('doctrine.orm.default_entity_manager')->flush();
+
+        pclose(popen("start /B ". $cmd, "r"));
+        return new Response('OK');
+    }
+
+    /**
+     * @Post("/proxy/restart",name="proxy.restart")
+     * @ApiDoc(
+     *     section="Proxy",
+     *     description="Refreshes Proxy server configs"
+     * )
+     */
+    public function  restartProxyAction(Request $request)
+    {
+        $userService = $this->get('nwl.user');
+        $apikey = $request->headers->get('apikey');
+        if(null == $apikey)
+        {
+            return new Response('API-Key not found, please authorize', 401);
+        }
+        if(!$userService->isApiKeyForAdmin($apikey)){
+            return new Response('Invalid API-Key for Interaction', 403);
+        }
+        $path = $_SERVER["DOCUMENT_ROOT"];
+        $cmd = $path.'/plink.exe -pw abc123! -ssh "test@192.168.1.16" /home/test/freigeben.sh -restart';
+        pclose(popen("start /B ". $cmd, "r"));
         return new Response('OK');
     }
 }

@@ -48,22 +48,6 @@
                 $('#headers').removeAttr("hidden");
                 $('#container').removeAttr("hidden");
             }
-
-            {#$('#submitting').click(function (event) {#}
-                {#var reason = $('#reason').val();#}
-                {#$.ajax({#}
-                    {#url: '{{ path('create_white_list_request',{'username' : username }) }}',#}
-                    {#type: "POST",#}
-                    {#headers: {#}
-                        {#"apikey": apikey#}
-                    {#},#}
-            {#data: {domain: url, reason: reason},#}
-            {#success: function (data) {#}
-            {#console.log("answer " + data);#}
-                    {#}#}
-                {#});#}
-                {#event.preventDefault();#}
-            {#});#}
         });
 
         function updateSubmit() {
@@ -73,14 +57,14 @@
             } else {
                 $("#sub").removeClass("disabled").prop('disabled', false);
             }
-            if(!validateUserInput()){
+            if (!validateUserInput()) {
                 $("#sub").addClass("disabled").prop('disabled', true);
             }
         }
 
-        function urlFromStahl(url){
+        function urlFromStahl(url) {
             var parsedUrl = parseURL(url);
-            if(parsedUrl != null){
+            if (parsedUrl != null) {
                 var newUrl = url;
                 if (parsedUrl.protocol.length <= 0) {
                     newUrl = "http://" + newUrl;
@@ -89,51 +73,51 @@
                     newUrl += "/";
                 }
                 parsedUrl = parseURL(newUrl);
-                if(parsedUrl.subdomain === "www"){
+                if (parsedUrl.subdomain === "www") {
                     $("#domain").val(parsedUrl.parent_domain);
-                }else{
+                } else {
                     $("#domain").val(parsedUrl.domain);
                 }
             }
         }
 
-        function validateUserInput(){
+        function validateUserInput() {
             var url = $("#domain").val();
             var parsedUserUrl = parseURL(url);
-            if(parsedUserUrl != null){
-                if(parsedUserUrl.protocol.length <= 0){
-                    url = "http://"+url;
+            if (parsedUserUrl != null) {
+                if (parsedUserUrl.protocol.length <= 0) {
+                    url = "http://" + url;
                 }
-                if(parsedUserUrl.path == null){
+                if (parsedUserUrl.path == null) {
                     url += "/";
                 }
                 parsedUserUrl = parseURL(url);
 
-                if(parsedUserUrl.host != "www" && parsedUserUrl.tld && parsedUserUrl.tld.length > 1 && /^[a-zA-Z\.]+$/.test(parsedUserUrl.tld)){
+                if (parsedUserUrl.host != "www" && parsedUserUrl.tld && parsedUserUrl.tld.length > 1 && /^[a-zA-Z\.]+$/.test(parsedUserUrl.tld)) {
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             }
         }
 
-        function validUserUrl(){
+        function validUserUrl() {
             var url = $("#domain").val();
             var parsedUserUrl = parseURL(url);
-            if(parsedUserUrl != null){
-                if(parsedUserUrl.protocol.length <= 0){
-                    url = "http://"+url;
+            if (parsedUserUrl != null) {
+                if (parsedUserUrl.protocol.length <= 0) {
+                    url = "http://" + url;
                 }
-                if(parsedUserUrl.path == null){
+                if (parsedUserUrl.path == null) {
                     url += "/";
                 }
                 parsedUserUrl = parseURL(url);
-                if(parsedUserUrl.subdomain === "www"){
+                if (parsedUserUrl.subdomain === "www") {
                     $("#domain").val(parsedUserUrl.parent_domain);
-                }else{
+                } else {
                     $("#domain").val(parsedUserUrl.domain);
                 }
-            }else{
+            } else {
                 // Ungültige URL (Validierung failed (muss 1x Punkt haben und vor und nach dem Punkt etwas stehen haben)
             }
         }
@@ -190,8 +174,4 @@
                     </div>
                 </div>
             </form>
-
-
-        <!-- action="{{ path('whitelist-request.list', {'username': username}) }}" -->
-
     {% endblock %}

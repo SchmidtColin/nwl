@@ -46,6 +46,34 @@
 
         }
 
+        /* label color */
+        .input-field label {
+            color: #6882A2;
+        }
+        /* label focus color */
+        .input-field input[type=text]:focus + label {
+            color: #6882A2;
+        }
+        /* label underline focus color */
+        .input-field input[type=text]:focus {
+            border-bottom: 1px solid #6882A2;
+            box-shadow: 0 1px 0 0 #6882A2;
+        }
+        /* valid color */
+        .input-field input[type=text].valid {
+            border-bottom: 1px solid #6882A2;
+            box-shadow: 0 1px 0 0 #6882A2;
+        }
+        /* invalid color */
+        .input-field input[type=text].invalid {
+            border-bottom: 1px solid #6882A2;
+            box-shadow: 0 1px 0 0 #6882A2;
+        }
+        /* icon prefix focus color */
+        .input-field .prefix.active {
+            color: #6882A2;
+        }
+
         a:not(:link) {
             color: inherit;
         }
@@ -79,15 +107,11 @@
     <nav>
         <div class="nav-wrapper grey lighten-3">
             <div class="brand-logo " style="margin-left: 1%; margin-top: 1px">
-                {#<a href="#!" class="brand-logo">Logo</a>#}
-                {#<a href="#" class="logo-img"><img class="logo-img" src="{{ asset('bundles/frontend/img/DRV.png') }}" alt="DRV-Logo"/></a>#}
-                {#<a href="#" class="logo-img"><img class="logo-img" src="{{ asset('bundles/frontend/img/Nestecs.png') }}" alt="Nestecs-Logo"/></a>#}
-                {#<a href="#!" class="brand-logo">Logo</a>#}
-                <a href="#" class="brand-logo"><img class="logo-img" src="{{ asset('bundles/frontend/img/ita.png') }}"
-                                                    alt="ita-Logo"/></a>
+                <a href="#" class="brand-logo"><img class="logo-img" src="{{ asset('bundles/frontend/img/LogoAusbildung.png') }}"
+                                                    alt="LogoAusbildung-Logo" style="padding-bottom: 15px; padding-top: 15px" /></a>
             </div>
             {% block headerLinks %}
-                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons" style="color: #6882A2">menu</i></a>
                 <ul class="right hide-on-med-and-down ">
                     <li><a class="waves-effect waves-light black-text"
                            href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
