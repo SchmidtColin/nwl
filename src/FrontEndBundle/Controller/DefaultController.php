@@ -48,6 +48,7 @@ class DefaultController extends Controller
         $domain = $request->request->get('domain');
         $reason = $request->request->get('reason');
         $givenUrl = $request->request->get('url');
+        $givenUser = $request->request->get('user');
 
         if ($domain != null && $reason != null) {
             $userService = $this->get('nwl.user');
@@ -66,8 +67,8 @@ class DefaultController extends Controller
             $template = $userService->getTemplate($user);
             return $this->render($template, $params);
         }
-
-        return $this->render('FrontEndBundle:Default:requestform.html.twig', array('username' => $username, 'url' => $givenUrl));
+        $params = array('username' => $username, 'url' => $givenUrl, 'user'=>$givenUser);
+        return $this->render('FrontEndBundle:Default:requestform.html.twig', $params);
     }
 
 

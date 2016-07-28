@@ -27,9 +27,16 @@
         } else {
             var url = sessionStorage.getItem('url');
         }
+        var user;
+        if (sessionStorage.getItem('user') == null) {
+            user = '{{ user }}';
+        } else {
+            user = sessionStorage.getItem('user');
+        }
 
         var apikey = localStorage.getItem('apikey');
         sessionStorage.setItem('url', url);
+        sessionStorage.setItem('user', user);
         $(document).ready(function () {
             $('.modal-trigger').leanModal();
             if (apikey == "null") {
