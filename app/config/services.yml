@@ -8,6 +8,12 @@ services:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
 
+    nwl_domain_validator:
+            class: nwlBundle\Validator\DomainConstraintValidator
+            tags:
+                        -
+                            name: validator.constraint_validator
+                            alias: nwl_domain_validator
 
     apikey_authenticator:
         class:  AppBundle\Security\ApiKeyAuthenticator

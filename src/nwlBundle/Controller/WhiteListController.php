@@ -126,6 +126,10 @@ class WhiteListController extends FOSRestController
 
         //Create Datamodel Dummies
         $whiteListTarget = new WhiteListTarget();
+
+        $resultFromDomainValidation = $this->validateDomain($domain);
+        $domain = $resultFromDomainValidation;
+
         $whiteListTarget->setDomain($domain);
 
         $whiteListRequest = new WhiteListRequest();
@@ -155,6 +159,57 @@ class WhiteListController extends FOSRestController
             $whiteListRequest = $whiteListService->createWhiteListRequest($whiteListRequest);
         }
         return $this->view($whiteListRequest);
+    }
+
+    function validateDomain($domain){
+
+        if(!strpos($domain,'://')){
+            $domain = "http://".$domain;
+        }
+
+//        $domain .= '/';
+        $protocol_i = null;
+        $remaining_url = null;
+        $domain_i = null;
+        $domain_parts = null;
+
+        $parsed_url = array(
+            'protocol'=>'',
+            'domain'=>'',
+            'path'=>'',
+            'tld'=>'',
+            'parent_domain'=>'',
+            'subdomain'=>'',
+            'host'=>''
+        );
+
+        $protocol_i = strrpos($domain,'://');
+        $parsed_url['protocol'] = $protocol_i;
+        $remaining_url = substr($domain,$protocol_i+3,strlen($domain));
+        $domain_i = strpos($remaining_url,'/');
+        $domain_i = $domain_i == -1 ? strlen($remaining_url) -1 : $domain_i;
+        $parsed_url['domain'] = substr($remaining_url,0,$domain_i); // http wird angefügt... und http:// vorne ist immernoch da! -.-
+        $parsed_url['path'] = $domain_i == -1 || $domain_i + 1 == strlen($remaining_url) ? null : substr($remaining_url,$domain_i+1,strlen($remaining_url)); // hier fügt er HTTP hinzu o.o WHY!
+        $domain_parts = explode(".",$parsed_url['domain']);
+        switch (sizeof($domain_parts)){
+            case 2:
+                $parsed_url['subdomain'] = null;
+                $parsed_url['host'] = $domain_parts[0];
+                $parsed_url['tld'] = $domain_parts[1];
+                break;
+            case 3:
+                $parsed_url['subdomain'] = $domain_parts[0];
+                $parsed_url['host'] = $domain_parts[1];
+                $parsed_url['tld'] = $domain_parts[2];
+                break;
+            case 4:
+                $parsed_url['subdomain'] = $domain_parts[0];
+                $parsed_url['host'] = $domain_parts[1];
+                $parsed_url['tld'] = $domain_parts[2].".".$domain_parts[3];
+                break;
+        }
+        $parsed_url['parent_domain'] = $parsed_url['host'].".".$parsed_url['tld'];
+        return $parsed_url['parent_domain'];
     }
 
 

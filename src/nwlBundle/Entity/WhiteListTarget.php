@@ -9,6 +9,7 @@
 namespace nwlBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use nwlBundle\Validator\Constraint\DomainConstraint;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -37,6 +38,7 @@ class WhiteListTarget
      *
      * @ORM\Column(name="domain", type="string", length=255)
      * @Assert\NotBlank()
+     * @DomainConstraint()
      */
     private $domain;
 
