@@ -43,11 +43,15 @@
             sessionStorage.setItem('user', null);
         }
         $(document).ready(function () {
-            $('#username').val(user);
-            $('#username').focus();
-            if ($('#username').val())
-                $('#password').focus();
-            Materialize.update()
+            if (user != "null")
+                $('#username').val(user);
+
+            if (!$('#username').val()) {
+                $('#username').attr('placeholder', 'enter your name here').focus();
+            } else {
+                $('#password').attr('placeholder', 'enter your password here').focus();
+            }
+
 
             $('form button').click(function (event) {
                 var params = $('form').serialize();
@@ -66,7 +70,8 @@
                 event.preventDefault();
             });
 
-        });
+        })
+        ;
     </script>
 {% endblock %}
 
