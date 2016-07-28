@@ -15,6 +15,7 @@
     background-size: contain;
     background-repeat: no-repeat;
 }
+
 .allowed {
     background: #c8e6c9;
 }
@@ -26,6 +27,7 @@
 .pending {
     background: #b3e5fc;
 }
+
 .header{
     display:                flex;
     flex-flow:              row nowrap;
@@ -50,22 +52,27 @@
 
     margin:                 10px 10px 0 0;
 }
+
 .decided-by, .decided-by-container label{
     font-size:              large;
     font-weight:            600;
 }
+
 .pending .decided-by-container{
     display:                none;
 }
+
 .domain{
     margin-top: 0;
 }
+
 .legend{
     position:               fixed;
     bottom:                 20px;
     right:                  10px;
 
 }
+
 .legend .entry{
     height:                 25px;
     width:                  100%;
@@ -107,6 +114,7 @@
 .pending .state-icon .icon-pending {
     display: unset;
 }
+
 </style>
 {% endblock %}
 {% block customScripts %}
