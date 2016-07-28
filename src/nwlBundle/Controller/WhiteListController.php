@@ -132,6 +132,8 @@ class WhiteListController extends FOSRestController
         $domain = $resultFromDomainValidation;
 
         $whiteListTarget->setDomain($domain);
+        //Insert Data into Database
+        $whiteListTarget = $whiteListService->getOrCreateTargetByDomain($domain);
 
         $whiteListRequest = new WhiteListRequest();
         $whiteListRequest->setUser($user);
@@ -151,9 +153,6 @@ class WhiteListController extends FOSRestController
             return $this->view($constraintViolations, 422);
         }
 
-        //Insert Data into Database
-        $whiteListTarget = $whiteListService->getOrCreateTargetByDomain($domain);
-
         //Check if request exists
         $tmpWhiteListRequest = $whiteListService->findWhiteListRequest($whiteListTarget, $user);
         if(null === $tmpWhiteListRequest){
@@ -168,7 +167,7 @@ class WhiteListController extends FOSRestController
             $domain = "http://".$domain;
         }
 
-//        $domain .= '/';
+        $domain .= '/';
         $protocol_i = null;
         $remaining_url = null;
         $domain_i = null;
