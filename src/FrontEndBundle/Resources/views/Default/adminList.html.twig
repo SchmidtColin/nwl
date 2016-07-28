@@ -17,17 +17,6 @@
     background-repeat: no-repeat;
 }
 
-.whitelist-target-entry.allowed::after {
-    background-image: url('{{ asset('bundles/frontend/img/allowed.png') }}');
-}
-
-.whitelist-target-entry.pending::after {
-    background-image: url('{{ asset('bundles/frontend/img/pending.png') }}');
-}
-
-.whitelist-target-entry.denied::after {
-    background-image: url('{{ asset('bundles/frontend/img/denied.png') }}');
-}
 .domain {
     margin: 0 5px 0 0;
     display: inline;
@@ -38,8 +27,6 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
-
-    padding-right: 60px;
 }
 
 .collapsible {
@@ -68,11 +55,11 @@
 }
 .decided-by-container{
     display:                flex;
-    flex-flow:              row nowrap;
+    flex-flow:              column nowrap;
     justify-content:        center;
-    align-items:            center;
 
     margin-right:           10px;
+    line-height:            1.2em;
 }
 .decision-btns {
 
@@ -88,14 +75,37 @@
 .pending {
     background: #b3e5fc;
 }
-.allow-button, .deny-button, .open-button{
+
+.decision-list {
+    background-color: transparent;
+    min-width: 0;
+    box-shadow: none;
+    top: unset !important;
+}
+
+.decision-list li {
+    border-radius: 50%;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
+.allow-button, .deny-button, .open-button, .visit-button{
     display:                flex;
     flex-flow:              row nowrap;
     justify-content:        center;
     align-items:            center;
 }
-.open-button i,.allow-button i,.deny-button i{
+.open-button i,.allow-button i,.deny-button i,.visit-button i{
     margin: 0;
+}
+.visit-link i {
+    color: #fff;
 }
 .allowed .allow-button {
     display: none;
@@ -106,6 +116,7 @@
 </style>
 {% endblock %}
 {% block customScripts %}
+    <script src="{{ asset('bundles/frontend/js/sortTargets.js') }}"></script>
 <script>
 'use strict';
 var apikey = localStorage.getItem('apikey');
@@ -116,51 +127,62 @@ $(document).ready(function () {
         type: "GET",
         headers: {"apikey": apikey },
         success: function (data) {
-            $.each(data, function (index, target) {
-
-                var targetTemplate = $('#whitelist-target-template').clone(true);
-                targetTemplate.removeAttr('id');
-                targetTemplate.removeClass('template');
-
-                var adminName;
-                if(target.decided_by){
-                    if(!target.decided_by.firstname&&!target.decided_by.lastname) {
-                        adminName = target.decided_by.firstname+" "+target.decided_by.lastname;
-                    }else{
-                        adminName = target.decided_by.username;
-                    }
-                }else{
-                    targetTemplate.find('.decided-by-container').hide();
-                }
-
-                targetTemplate.find('.domain').text(target.domain);
-                targetTemplate.find('.decided-by').text(adminName);
-                targetTemplate.addClass(stateClasses[target.state]);
-                targetTemplate.find('.allow-button').attr('data-id', target.id);
-                targetTemplate.find('.deny-button').attr('data-id', target.id);
-                targetTemplate.find('.dropdown-button').attr('data-activates','decision-buttons-'+target.id);
-                targetTemplate.find('.dropdown-content').attr('id','decision-buttons-'+target.id);
-
-                $.each(target.whitelist_requests, function (requestIndex, request) {
-                    var requestTemplate = $('#whitelist-target-request-template').clone();
-                    requestTemplate.removeAttr('id');
-                    requestTemplate.removeClass('template');
-
-                    var formattedDate = new Date(request.created);
-                    formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
-
-                    requestTemplate.find('.user').text(request.user.username);
-                    requestTemplate.find('.reason').text(request.reason);
-                    requestTemplate.find('.created').text(formattedDate);
-
-                    targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
-                });
-
-                $('.whitelist-target-list').append(targetTemplate);
-                //requestTemplate.delay(index*150).fadeIn(300);
-            });
+            data = sortTargets(data);
+            insertTargets(data.pending, '#whitelist-requests-pending');
+            insertTargets(data.processed, '#whitelist-requests-done');
+            $('.decision-btns').trigger('click');
         }
     });
+
+    function insertTargets(data, elementSelector) {
+        $.each(data, function (index, target) {
+
+            var targetTemplate = $('#whitelist-target-template').clone(true);
+            targetTemplate.removeAttr('id');
+            targetTemplate.removeClass('template');
+
+            var adminName;
+            var decisionDate;
+            if(target.decided_by){
+                if(!target.decided_by.firstname&&!target.decided_by.lastname) {
+                    adminName = target.decided_by.firstname+" "+target.decided_by.lastname;
+                }else{
+                    adminName = target.decided_by.username;
+                }
+                decisionDate = new Date(target.decision_date).format('dd.mm.yyyy " um " H:MM " Uhr"');
+            }else{
+                targetTemplate.find('.decided-by-container').hide();
+            }
+
+            targetTemplate.find('.domain').text(target.domain);
+            targetTemplate.find('.decided-by').text(adminName);
+            targetTemplate.find('.decision-date').text(decisionDate);
+            targetTemplate.addClass(stateClasses[target.state]);
+            targetTemplate.find('.allow-button').attr('data-id', target.id);
+            targetTemplate.find('.deny-button').attr('data-id', target.id);
+            targetTemplate.find('.visit-link').attr('href', '//' + target.domain);
+            targetTemplate.find('.dropdown-button').attr('data-activates','decision-buttons-'+target.id);
+            targetTemplate.find('.dropdown-content').attr('id','decision-buttons-'+target.id);
+
+            $.each(target.whitelist_requests, function (requestIndex, request) {
+                var requestTemplate = $('#whitelist-target-request-template').clone();
+                requestTemplate.removeAttr('id');
+                requestTemplate.removeClass('template');
+
+                var formattedDate = new Date(request.created);
+                formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+
+                requestTemplate.find('.user').text(request.user.username);
+                requestTemplate.find('.reason').text(request.reason);
+                requestTemplate.find('.created').text(formattedDate);
+
+                targetTemplate.find('.whitelist-target-request-table').append(requestTemplate);
+            });
+
+            $(elementSelector).append(targetTemplate);
+            //requestTemplate.delay(index*150).fadeIn(300);
+        });
+    }
 
     $('.decision-btns').click(function(event){
         event.stopPropagation();
@@ -193,9 +215,9 @@ $(document).ready(function () {
     });
 });
 function decideFor(id, state) {
-    console.log(id+" "+admin);
     $.ajax({
-        url: '/nwlProject/nwl/web/app_dev.php/api/whitelist-target/' + id,
+        // todo änder die URL beim push!
+        url: '/nwlProject/web/app_dev.php/api/whitelist-target/' + id,
         type: "POST",
         headers: {"apikey": apikey },
         data: {state: state},
@@ -228,23 +250,29 @@ function update(btn) {
 
                         <div class="decision">
                             <div class="decided-by-container">
-                                <label>entschied:</label>
-                                <div class="decided-by"></div>
+                                <div>
+                                    <label>entschied:</label>
+                                    <span class="decided-by"></span>
+                                </div>
+                                <div>
+                                    <label>am:</label>
+                                    <span class="decision-date"></span>
+                                </div>
                             </div>
                             <div class="decision-btns">
                                 <a class='dropdown-button btn-floating btn-large waves-effect waves-light open-button'
                                    href='#' data-activates='decision-buttons'>
                                     <i class="material-icons">menu</i>
                                 </a>
-                                <ul id='decision-buttons' class='dropdown-content'>
-                                    <li>
-                                       <div></div>
+                                <ul id='decision-buttons' class='dropdown-content decision-list'>
+                                    <li class="waves-effect waves-green blue lighten-2 visit-button">
+                                        <a class="visit-link" href="#" target="_blank"><i class="material-icons" title="Website besuchen">http</i></a>
                                     </li>
                                     <li class="waves-effect waves-green light-green allow-button">
-                                            <i class="material-icons text-blue">done</i>
+                                        <i class="material-icons text-blue" title="Domain freigeben">done</i>
                                     </li>
                                     <li class="waves-effect waves-red red darken-3 deny-button">
-                                        <i class="material-icons">not_interested</i>
+                                        <i class="material-icons" title="Freigabeantrag ablehnen">not_interested</i>
                                     </li>
                                 </ul>
                             </div>
@@ -272,5 +300,13 @@ function update(btn) {
             </ul>
         </div>
     </div>
+
+    <section id="whitelist-requests-pending">
+
+    </section>
+    <hr>
+    <section id="whitelist-requests-done">
+
+    </section>
 </div>
 {% endblock %}

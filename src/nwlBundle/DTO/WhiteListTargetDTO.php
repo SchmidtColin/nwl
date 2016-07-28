@@ -37,6 +37,26 @@ class WhiteListTargetDTO
      * @var WhiteListRequest[]
      */
     private $whitelistRequests;
+    /**
+     * @var \DateTime
+     */
+    private $decisionDate;
+
+    /**
+     * @return mixed
+     */
+    public function getDecisionDate()
+    {
+        return $this->decisionDate;
+    }
+
+    /**
+     * @param mixed $decisionDate
+     */
+    public function setDecisionDate($decisionDate)
+    {
+        $this->decisionDate = $decisionDate;
+    }
 
 
     /**

@@ -9,6 +9,7 @@
 namespace nwlBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use nwlBundle\Validator\Constraint\DomainConstraint;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -37,6 +38,7 @@ class WhiteListTarget
      *
      * @ORM\Column(name="domain", type="string", length=255)
      * @Assert\NotBlank()
+     * @DomainConstraint()
      */
     private $domain;
 
@@ -54,6 +56,13 @@ class WhiteListTarget
      * @ORM\JoinColumn(nullable=true, referencedColumnName="username")
      */
     private $decidedBy;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="decision_date", type="datetime")
+     */
+    private $decisionDate;
 
     /**
      * @return int
@@ -109,6 +118,22 @@ class WhiteListTarget
     public function setDecidedBy($decidedBy)
     {
         $this->decidedBy = $decidedBy;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDecisionDate()
+    {
+        return $this->decisionDate;
+    }
+
+    /**
+     * @param \DateTime $decisionDate
+     */
+    public function setDecisionDate($decisionDate)
+    {
+        $this->decisionDate = $decisionDate;
     }
 
 }
