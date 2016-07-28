@@ -49,6 +49,7 @@ class DefaultController extends Controller
         $reason = $request->request->get('reason');
         $givenUrl = $request->request->get('url');
         $givenUser = $request->request->get('user');
+        $requestExists = null;
 
         if ($domain != null && $reason != null) {
             $userService = $this->get('nwl.user');
@@ -61,7 +62,19 @@ class DefaultController extends Controller
             $whitelistRequest->setWhitelistTarget($target);
             $whitelistRequest->setReason($reason);
             $whitelistRequest->setCreated(new \DateTime());
-            $whitelistService->createWhiteListRequest($whitelistRequest);
+
+
+            $allUserRequests = $whitelistService->findWhiteListRequestsByUsername($username);
+
+            foreach ($allUserRequests as $curWhitelistRequest) {
+                if($whitelistRequest->getWhitelistTarget() == $curWhitelistRequest->getWhitelistTarget()) {
+                    $requestExists = "true";
+                }
+            }
+
+            if($requestExists != "true"){
+                $whitelistService->createWhiteListRequest($whitelistRequest);
+            }
 
             $params = array('username' => $username);
             $template = $userService->getTemplate($user);

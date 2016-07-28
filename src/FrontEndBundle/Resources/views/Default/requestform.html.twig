@@ -35,18 +35,35 @@
         }
 
         var apikey = localStorage.getItem('apikey');
+        var url = (sessionStorage.getItem('url') == null) ? '{{ url }}' : sessionStorage.getItem('url');
         sessionStorage.setItem('url', url);
         sessionStorage.setItem('user', user);
         $(document).ready(function () {
             $('.modal-trigger').leanModal();
             if (apikey == "null") {
-                window.location.replace("../../login");
+                window.open('../../login', '_self');
             } else {
                 console.log("URL: " + sessionStorage.getItem('url'));
-                urlFromStahl(sessionStorage.getItem('url'));
+                urlFromStahl(url);
                 $('#headers').removeAttr("hidden");
                 $('#container').removeAttr("hidden");
             }
+
+            {#$('#submitting').click(function (event) {#}
+                {#var reason = $('#reason').val();#}
+                {#$.ajax({#}
+                    {#url: '{{ path('create_white_list_request',{'username' : username }) }}',#}
+                    {#type: "POST",#}
+                    {#headers: {#}
+                        {#"apikey": apikey#}
+                    {#},#}
+            {#data: {domain: url, reason: reason},#}
+            {#success: function (data) {#}
+            {#console.log("answer " + data);#}
+                    {#}#}
+                {#});#}
+                {#event.preventDefault();#}
+            {#});#}
         });
 
         function updateSubmit() {
@@ -65,8 +82,11 @@
             var parsedUrl = parseURL(url);
             if(parsedUrl != null){
                 var newUrl = url;
-                if(!parsedUrl.path){
-                    newUrl+= "/";
+                if (parsedUrl.protocol.length <= 0) {
+                    newUrl = "http://" + newUrl;
+                }
+                if (!parsedUrl.path) {
+                    newUrl += "/";
                 }
                 parsedUrl = parseURL(newUrl);
                 if(parsedUrl.subdomain === "www"){
@@ -132,44 +152,44 @@
 
     {% block mainContent %}
         <div hidden="hidden" id="container" class="container">
-        <form method="POST">
-            <div class="row">
-                <div class="input-field col s9 offset-s1">
-                    <input id="domain" type="text" class="validate" name="domain"
-                           oninput="updateSubmit()">
-                    <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
-                </div>
-                <div class="input-field col s9 offset-s1">
+            <form method="POST">
+                <div class="row">
+                    <div class="input-field col s9 offset-s1">
+                        <input id="domain" type="text" class="validate" name="domain"
+                               oninput="updateSubmit()">
+                        <label for="domain"><i class="tiny material-icons left">language</i>Domain</label>
+                    </div>
+                    <div class="input-field col s9 offset-s1">
                         <textarea id="reason" class="materialize-textarea" length="150" name="reason"
                                   oninput="updateSubmit()"></textarea>
-                    <label for="reason"><i
-                                class="tiny material-icons left">chat_bubble_outline</i>Begründung</label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
-                <button disabled="disabled" id="sub"
-                        class="waves-effect waves-light btn modal-trigger disabled col s2" href="#modal1">Los
-                </button>
-                <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
-                <div id="modal1" class="modal">
-                    <div class="modal-content">
-                        <h4>Anfrage versenden</h4>
-                        <p>Durch Klicken auf "Bestätigen" wird Ihre Anfrage an den Admin gesenden.
-                            </br> Sie werden dann auf Ihre Übersicht weitergeleitet.
-                        </p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#!"
-                           class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
-                        <button class=" modal-action modal-close waves-effect waves-green btn-flat"
-                                onclick="validUserUrl()" type="submit"
-                                name="action">Bestätigen
-                        </button>
+                        <label for="reason"><i
+                                    class="tiny material-icons left">chat_bubble_outline</i>Begründung</label>
                     </div>
                 </div>
-            </div>
-        </form>
+                <div class="row">
+                    <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
+                    <button disabled="disabled" id="sub"
+                            class="waves-effect waves-light btn modal-trigger disabled col s2" href="#modal1">Los
+                    </button>
+                    <div class="waves-effect waves-light btn col s5 dummy">Abschicken</div>
+                    <div id="modal1" class="modal">
+                        <div class="modal-content">
+                            <h4>Anfrage versenden</h4>
+                            <p>Durch Klicken auf "Bestätigen" wird Ihre Anfrage an den Admin gesenden.
+                                </br> Sie werden dann auf Ihre Übersicht weitergeleitet.
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="#!"
+                               class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
+                            <button id="submitting" class=" modal-action modal-close waves-effect waves-green btn-flat"
+                                    onclick="validUserUrl()" type="submit"
+                                    name="action">Bestätigen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
 
 
         <!-- action="{{ path('whitelist-request.list', {'username': username}) }}" -->

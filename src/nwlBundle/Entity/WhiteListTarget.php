@@ -60,7 +60,7 @@ class WhiteListTarget
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="decision_date", type="datetime")
+     * @ORM\Column(name="decision_date", type="datetime",nullable=true)
      */
     private $decisionDate;
 

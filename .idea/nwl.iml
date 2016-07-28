@@ -45,5 +45,7 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="knockout" level="application" />
+    <orderEntry type="library" name="materialize" level="application" />
   </component>
 </module>
