@@ -210,7 +210,12 @@ class WhiteListController extends FOSRestController
                 break;
         }
         $parsed_url['parent_domain'] = $parsed_url['host'].".".$parsed_url['tld'];
-        return $parsed_url['parent_domain'];
+        if($parsed_url['subdomain'] === "www"){
+            return $parsed_url['parent_domain'];
+        }else{
+            return $parsed_url['domain'];
+        }
+
     }
 
 
