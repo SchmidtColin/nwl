@@ -39,6 +39,7 @@ $(document).ready(function() {
     $(".button-collapse").sideNav();
     $('ul li .logout').click(function(event){
        localStorage.setItem('apikey', null);
+       sessionStorage.clear();
        window.open('{{ path('whitelist-request.login') }}','_self');
        event.preventDefault();
     });
