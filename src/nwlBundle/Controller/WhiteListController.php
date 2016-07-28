@@ -259,4 +259,28 @@ class WhiteListController extends FOSRestController
         pclose(popen("start /B ". $cmd, "r"));
         return new Response('OK');
     }
+
+    /**
+     * @Post("/proxy/restart",name="proxy.restart")
+     * @ApiDoc(
+     *     section="Proxy",
+     *     description="Refreshes Proxy server configs"
+     * )
+     */
+    public function  restartProxyAction(Request $request)
+    {
+        $userService = $this->get('nwl.user');
+        $apikey = $request->headers->get('apikey');
+        if(null == $apikey)
+        {
+            return new Response('API-Key not found, please authorize', 401);
+        }
+        if(!$userService->isApiKeyForAdmin($apikey)){
+            return new Response('Invalid API-Key for Interaction', 403);
+        }
+        $path = $_SERVER["DOCUMENT_ROOT"];
+        $cmd = $path.'/plink.exe -pw abc123! -ssh "test@192.168.1.16" /home/test/freigeben.sh -restart';
+        pclose(popen("start /B ". $cmd, "r"));
+        return new Response('OK');
+    }
 }
