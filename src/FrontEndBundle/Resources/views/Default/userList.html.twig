@@ -33,6 +33,15 @@
     align-items:            flex-start;
 
 }
+
+.header .whitelist-request-target-info {
+    flex-grow: 1;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
 .decided-by-container{
     display:                flex;
     flex-flow:              row nowrap;
@@ -62,6 +71,41 @@
     width:                  100%;
 
     padding:                0 10px;
+}
+
+.state-icon {
+    width: 55.5px;
+    height: 55.5px;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.whitelist-request-entry.allowed .state-icon {
+    background: #8bc34a;
+}
+.whitelist-request-entry.denied .state-icon {
+    background: #c62828;
+}
+.whitelist-request-entry.pending .state-icon {
+    background: #64b5f6;
+}
+
+.state-icon .material-icons {
+    display: none;
+    line-height: 55.5px;
+    font-size: 40px;
+}
+
+.allowed .state-icon .icon-allowed {
+    display: unset;
+}
+
+.denied .state-icon .icon-denied {
+    display: unset;
+}
+
+.pending .state-icon .icon-pending {
+    display: unset;
 }
 </style>
 {% endblock %}
@@ -125,10 +169,17 @@ $(document).ready(function(){
     <div id="whitelist-request-template" class="whitelist-request-entry card template">
         <div class="card-content">
             <header class="header">
-                <a class="domain-link"><h2 class="domain">Domain-Name</h2></a>
-                <div class="decided-by-container decision-style">
-                    <label class="decision-style">entschied:</label>
-                    <div class="decided-by"></div>
+                <div class="whitelist-request-target-info">
+                    <a class="domain-link"><h2 class="domain flow-text">Domain-Name</h2></a>
+                    <div class="decided-by-container decision-style">
+                        <label class="decision-style">entschied:</label>
+                        <div class="decided-by"></div>
+                    </div>
+                </div>
+                <div class="state-icon z-depth-1">
+                    <i class="material-icons icon-pending" title="Ausstehend">query_builder</i>
+                    <i class="material-icons icon-allowed" title="Freigegeben">done</i>
+                    <i class="material-icons icon-denied" title="Abgelehnt">not_interested</i>
                 </div>
             </header>
             <div class="container">
