@@ -30,11 +30,19 @@
             .button-container button{
                 width:  100%;
             }
+        }
     </style>
 {% endblock %}
 {% block customScripts %}
     <script>
+        var user = sessionStorage.getItem('user');
+        if(user != null){
+            sessionStorage.setItem('user', null);
+        }
         $(document).ready(function () {
+            console.log(sessionStorage.getItem('url'));
+            $('#username').val(user);
+
             $('form button').click(function (event) {
                 var params = $('form').serialize();
                 var username = $('#username').val();

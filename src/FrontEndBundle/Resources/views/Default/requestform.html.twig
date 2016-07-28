@@ -22,12 +22,23 @@
 {% block customScripts %}
     <script src="{{ asset('bundles/frontend/js/domainValidation.js') }}"></script>
     <script>
+        if (sessionStorage.getItem('url') == null) {
+            var url = '{{ url }}';
+        } else {
+            var url = sessionStorage.getItem('url');
+        }
+        var user;
+        if (sessionStorage.getItem('user') == null) {
+            user = '{{ user }}';
+        } else {
+            user = sessionStorage.getItem('user');
+        }
+
         var apikey = localStorage.getItem('apikey');
         var url = (sessionStorage.getItem('url') == null) ? '{{ url }}' : sessionStorage.getItem('url');
         sessionStorage.setItem('url', url);
-
+        sessionStorage.setItem('user', user);
         $(document).ready(function () {
-
             $('.modal-trigger').leanModal();
             if (apikey == "null") {
                 window.open('../../login', '_self');
@@ -55,7 +66,6 @@
             {#});#}
         });
 
-
         function updateSubmit() {
             console.log(apikey);
             if ($("#domain").val() == '' || $("#reason").val() == '') {
@@ -63,14 +73,14 @@
             } else {
                 $("#sub").removeClass("disabled").prop('disabled', false);
             }
-            if (!validateUserInput()) {
+            if(!validateUserInput()){
                 $("#sub").addClass("disabled").prop('disabled', true);
             }
         }
 
-        function urlFromStahl(url) {
+        function urlFromStahl(url){
             var parsedUrl = parseURL(url);
-            if (parsedUrl != null) {
+            if(parsedUrl != null){
                 var newUrl = url;
                 if (parsedUrl.protocol.length <= 0) {
                     newUrl = "http://" + newUrl;
@@ -79,51 +89,51 @@
                     newUrl += "/";
                 }
                 parsedUrl = parseURL(newUrl);
-                if (parsedUrl.subdomain === "www") {
+                if(parsedUrl.subdomain === "www"){
                     $("#domain").val(parsedUrl.parent_domain);
-                } else {
+                }else{
                     $("#domain").val(parsedUrl.domain);
                 }
             }
         }
 
-        function validateUserInput() {
+        function validateUserInput(){
             var url = $("#domain").val();
             var parsedUserUrl = parseURL(url);
-            if (parsedUserUrl != null) {
-                if (parsedUserUrl.protocol.length <= 0) {
-                    url = "http://" + url;
+            if(parsedUserUrl != null){
+                if(parsedUserUrl.protocol.length <= 0){
+                    url = "http://"+url;
                 }
-                if (parsedUserUrl.path == null) {
+                if(parsedUserUrl.path == null){
                     url += "/";
                 }
                 parsedUserUrl = parseURL(url);
 
-                if (parsedUserUrl.host != "www" && parsedUserUrl.tld && parsedUserUrl.tld.length > 1 && /^[a-zA-Z\.]+$/.test(parsedUserUrl.tld)) {
+                if(parsedUserUrl.host != "www" && parsedUserUrl.tld && parsedUserUrl.tld.length > 1 && /^[a-zA-Z\.]+$/.test(parsedUserUrl.tld)){
                     return true;
-                } else {
+                }else{
                     return false;
                 }
             }
         }
 
-        function validUserUrl() {
+        function validUserUrl(){
             var url = $("#domain").val();
             var parsedUserUrl = parseURL(url);
-            if (parsedUserUrl != null) {
-                if (parsedUserUrl.protocol.length <= 0) {
-                    url = "http://" + url;
+            if(parsedUserUrl != null){
+                if(parsedUserUrl.protocol.length <= 0){
+                    url = "http://"+url;
                 }
-                if (parsedUserUrl.path == null) {
+                if(parsedUserUrl.path == null){
                     url += "/";
                 }
                 parsedUserUrl = parseURL(url);
-                if (parsedUserUrl.subdomain === "www") {
+                if(parsedUserUrl.subdomain === "www"){
                     $("#domain").val(parsedUserUrl.parent_domain);
-                } else {
+                }else{
                     $("#domain").val(parsedUserUrl.domain);
                 }
-            } else {
+            }else{
                 // Ungültige URL (Validierung failed (muss 1x Punkt haben und vor und nach dem Punkt etwas stehen haben)
             }
         }
@@ -181,5 +191,7 @@
                 </div>
             </form>
 
+
+        <!-- action="{{ path('whitelist-request.list', {'username': username}) }}" -->
 
     {% endblock %}
