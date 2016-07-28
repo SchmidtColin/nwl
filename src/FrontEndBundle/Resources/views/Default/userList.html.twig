@@ -1,4 +1,5 @@
 {% extends('FrontEndBundle::base.html.twig') %}
+{% block siteTitle %}Meine Whitelist-Anfragen{% endblock %}
 {% block customStyles %}
 <style>
 .template {
@@ -14,26 +15,54 @@
     background-size: contain;
     background-repeat: no-repeat;
 }
-.whitelist-request-entry.allowed::after{
-    background-image: url('{{ asset('bundles/frontend/img/allowed.png') }}');
+.allowed {
+    background: #c8e6c9;
 }
 
-.whitelist-request-entry.pending::after {
-    background-image: url('{{ asset('bundles/frontend/img/pending.png') }}');
+.denied {
+    background: #ef9a9a;
 }
 
-.whitelist-request-entry.denied::after {
-    background-image: url('{{ asset('bundles/frontend/img/denied.png') }}');
+.pending {
+    background: #b3e5fc;
 }
-.links{
-    margin-top:         10px;
+.header{
+    display:                flex;
+    flex-flow:              row nowrap;
+    justify-content:        space-between;
+    align-items:            flex-start;
+
+}
+.decided-by-container{
+    display:                flex;
+    flex-flow:              row nowrap;
+    justify-content:        center;
+    align-items:            center;
+
+    margin:                 10px 10px 0 0;
+}
+.decided-by, .decided-by-container label{
+    font-size:              large;
+    font-weight:            600;
+}
+.pending .decided-by-container{
+    display:                none;
 }
 .domain{
     margin-top: 0;
 }
-    #newWLR{
-        margin-left: 44%;
-    }
+.legend{
+    position:               fixed;
+    bottom:                 20px;
+    right:                  10px;
+
+}
+.legend .entry{
+    height:                 25px;
+    width:                  100%;
+
+    padding:                0 10px;
+}
 </style>
 {% endblock %}
 {% block customScripts %}
@@ -55,12 +84,22 @@ $(document).ready(function(){
                 requestTemplate.removeAttr('id');
                 requestTemplate.removeClass('template');
 
-                var formattedDate = new Date(element.created);
-                formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+                var target = element.whitelist_target;
+                var formattedDate = new Date(element.created).format('dd.mm.yyyy " um " H:MM " Uhr"');
+                var adminName;
+                if(target.decided_by){
+                    if(!target.decided_by.firstname&&!target.decided_by.lastname) {
+                        adminName = target.decided_by.firstname+" "+target.decided_by.lastname;
+                    }else{
+                        adminName = target.decided_by.username;
+                    }
+                }else{
+                    requestTemplate.find('.decided-by-container').hide();
+                }
 
-                requestTemplate.addClass(stateClasses[element.whitelist_target.state]);
-
-                requestTemplate.find('.domain').text(element.whitelist_target.domain);
+                requestTemplate.addClass(stateClasses[target.state]);
+                requestTemplate.find('.domain').text(target.domain);
+                requestTemplate.find('.decided-by').text(adminName);
                 requestTemplate.find('.reason').text(element.reason);
                 requestTemplate.find('.created').text(formattedDate);
                 $('.whitelist-request-list').append(requestTemplate);
@@ -79,8 +118,12 @@ $(document).ready(function(){
 
     <div id="whitelist-request-template" class="whitelist-request-entry card template">
         <div class="card-content">
-            <header>
-                <h2 class="domain">Domain-Name</h2>
+            <header class="header">
+                <h4 class="domain">Domain-Name</h4>
+                <div class="decided-by-container">
+                    <label>entschied:</label>
+                    <div class="decided-by"></div>
+                </div>
             </header>
             <div class="container">
                 <blockquote>
@@ -92,7 +135,9 @@ $(document).ready(function(){
     </div>
 
 </div>
-<div class="links">
-    <a id="newWLR" href="{{ path('whitelist-request.form', {'username': username}) }}">Whitelist-Anfrage Erstellen</a>
+<div class="legend card">
+    <div class="entry allowed"><span class="label">freigegeben</span></div>
+    <div class="entry denied"><span class="label">abgelehnt</span></div>
+    <div class="entry pending"><span class="label">steht aus</span></div>
 </div>
 {% endblock %}
