@@ -257,7 +257,7 @@ class WhiteListController extends FOSRestController
         $this->get('doctrine.orm.default_entity_manager')->flush();
 
         pclose(popen("start /B ". $cmd, "r"));
-        return new Response('OK');
+        return $this->view('OK');
     }
 
     /**

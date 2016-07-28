@@ -206,7 +206,7 @@ $(document).ready(function () {
             }else{
                 targetTemplate.find('.decided-by-container').hide();
             }
-
+            targetTemplate.attr('id','target-'+target.id)
             targetTemplate.find('.domain').text(target.domain);
             targetTemplate.find('.decided-by').text(adminName);
             targetTemplate.find('.decision-date').text(decisionDate);
@@ -274,15 +274,34 @@ function decideFor(id, state) {
         headers: {"apikey": apikey },
         data: {state: state},
         success: function () {
-            //update();
+            update(id, state);
         },
-        dataType: "json"
+        error : function(data){
+            if(data.status == 200){
+                update(id, state);
+            }
+        }
     });
 }
-function update(btn) {
-    console.log(btn);
-    var targetEntry = btn.parent().parent().parent().parent();
-    console.log(targetEntry);
+function update(id, state) {
+    var element = $('#target-'+id);
+    if(state == 1){
+        if(element.hasClass('pending')){
+            element.removeClass('pending');
+        }else{
+            element.removeClass('denied');
+        }
+        element.addClass('allowed');
+    }else{
+        if(element.hasClass('pending')){
+            element.removeClass('pending');
+        }else{
+            element.removeClass('allowed');
+        }
+        element.addClass('denied');
+    }
+    //$('#target-'+id+' .dropdown-button').dropdown('close');
+    element.find('.dropdown-button').dropdown('close');
 }
 </script>
 {% endblock %}
