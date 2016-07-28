@@ -22,7 +22,7 @@
 {% block customScripts %}
     <script src="{{ asset('bundles/frontend/js/domainValidation.js') }}"></script>
     <script>
-        var apikey = localStorage.getItem('apikey');
+        //        var apikey = localStorage.getItem('apikey');
         var url = (sessionStorage.getItem('url') == null) ? '{{ url }}' : sessionStorage.getItem('url');
         sessionStorage.setItem('url', url);
 

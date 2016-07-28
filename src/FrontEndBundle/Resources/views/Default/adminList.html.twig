@@ -122,6 +122,8 @@ hr {
 var apikey = localStorage.getItem('apikey');
 var stateClasses = ['pending', 'allowed', 'denied'];
 $(document).ready(function () {
+    if (apikey == "null")
+        window.open('/nwl/web/app_dev.php/frontend/login', '_self');
     $.ajax({
         url: '{{ path('list_white_list_targetswhitelistTarget.all') }}',
         type: "GET",
