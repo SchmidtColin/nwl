@@ -285,6 +285,6 @@ class WhiteListController extends FOSRestController
         $path = $_SERVER["DOCUMENT_ROOT"];
         $cmd = $path.'/plink.exe -pw abc123! -ssh "test@192.168.1.16" /home/test/freigeben.sh -restart';
         pclose(popen("start /B ". $cmd, "r"));
-        return new Response('OK');
+        return $this->view('OK');
     }
 }
