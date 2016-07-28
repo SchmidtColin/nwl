@@ -58,6 +58,9 @@
             var parsedUrl = parseURL(url);
             if(parsedUrl != null){
                 var newUrl = url;
+                if(parsedUrl.protocol.length <= 0){
+                    newUrl = "http://"+newUrl;
+                }
                 if(!parsedUrl.path){
                     newUrl+= "/";
                 }
