@@ -6,7 +6,7 @@
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 <style>
 .template {
-    display: none;
+    display: none !important;
 }
 
 .whitelist-target-entry::after {
@@ -79,7 +79,9 @@
 .pending {
     background: #b3e5fc;
 }
-
+.domain-container{
+    flex-grow:                  1;
+}
 .decision-list {
     background-color: transparent;
     min-width: 0;
@@ -107,17 +109,57 @@ hr {
     justify-content:        center;
     align-items:            center;
 }
-.open-button i,.allow-button i,.deny-button i,.visit-button i{
+.decision-btns i{
+    color:  #fff;
     margin: 0;
-}
-.visit-link i {
-    color: #fff;
 }
 .allowed .allow-button {
     display: none;
 }
 .denied .deny-button {
     display: none;
+}
+
+.dropdown-button {
+    background: #aaa;
+}
+
+.allowed .dropdown-button {
+    background: #8bc34a;
+}
+
+.denied .dropdown-button {
+    background: #c62828;
+}
+
+.decision-status-btn-denied,
+.decision-status-btn-allowed,
+.decision-status-btn-pending {
+    display: none !important;
+}
+
+.allowed .decision-status-btn-allowed {
+    display: block !important;
+}
+.denied .decision-status-btn-denied {
+    display: block !important;
+}
+.pending .decision-status-btn-pending {
+    display: block !important;
+}
+@media all and (max-width: 449px){
+    .accordion-arrow{
+        display:                none;
+    }
+    .card-content .header{
+        flex-wrap: wrap;
+    }
+    .decided-by-container{
+        order: 1;
+    }
+    .decision {
+        margin-left: auto;
+    }
 }
 </style>
 {% endblock %}
@@ -201,6 +243,10 @@ $(document).ready(function () {
         });
     }
 
+    $('.decision-btns').click(function(event) {
+        event.stopPropagation();
+    });
+
     $(document).on('click', '.decision-btns', function(event) {
         event.stopPropagation();
         $(this).find('.dropdown-button').dropdown('toggle');
@@ -248,43 +294,45 @@ function update(btn) {
             <ul class="collapsible" data-collapsible="accordion">
                 <li>
                     <header class="header collapsible-header">
-                        <div>
+                        <div class="domain-container">
                             <div class="material-icons accordion-arrow">navigation</div>
-                            <h2 class="domain flow-text">Domain-Name</h2>
+                            <h2 class="domain flow-text ">Domain-Name</h2>
                         </div>
 
-                        <div class="decision">
-                            <div class="decided-by-container">
-                                <div>
-                                    <label>entschied:</label>
-                                    <span class="decided-by"></span>
-                                </div>
-                                <div>
-                                    <label>am:</label>
-                                    <span class="decision-date"></span>
-                                </div>
+                        <div class="decided-by-container">
+                            <div>
+                                <label>entschied:</label>
+                                <span class="decided-by"></span>
                             </div>
+                            <div>
+                                <label>am:</label>
+                                <span class="decision-date"></span>
+                            </div>
+                        </div>
+                        <div class="decision">
                             <div class="decision-btns">
                                 <a class='dropdown-button btn-floating btn-large waves-effect waves-light open-button'
                                    href='#' data-activates='decision-buttons'>
-                                    <i class="material-icons">menu</i>
+                                    <i class="material-icons decision-status-btn-pending">thumbs_up_down</i>
+                                    <i class="material-icons decision-status-btn-allowed">thumb_up</i>
+                                    <i class="material-icons decision-status-btn-denied">thumb_down</i>
                                 </a>
                                 <ul id='decision-buttons' class='dropdown-content decision-list'>
                                     <li class="waves-effect waves-green blue lighten-2 visit-button">
-                                        <a class="visit-link" href="#" target="_blank"><i class="material-icons" title="Website besuchen">http</i></a>
+                                        <a class="visit-link" href="#" target="_blank"><i class="material-icons" title="Website besuchen">open_in_new</i></a>
                                     </li>
                                     <li class="waves-effect waves-green light-green allow-button">
-                                        <i class="material-icons text-blue" title="Domain freigeben">done</i>
+                                        <i class="material-icons" title="Domain freigeben">thumb_up</i>
                                     </li>
                                     <li class="waves-effect waves-red red darken-3 deny-button">
-                                        <i class="material-icons" title="Freigabeantrag ablehnen">not_interested</i>
+                                        <i class="material-icons" title="Freigabeantrag ablehnen">thumb_down</i>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </header>
                     <div class="container collapsible-body">
-                        <table>
+                        <table class="responsive-table">
                             <thead>
                             <tr>
                                 <th class="user">Benutzer</th>
