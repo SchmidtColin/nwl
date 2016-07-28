@@ -1,6 +1,9 @@
 {% extends('FrontEndBundle::base.html.twig') %}
 {% block siteTitle %}Alle Whitelist Request{% endblock %}
 {% block customStyles %}
+
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 <style>
 .template {
     display: none;
@@ -215,9 +218,9 @@ $(document).ready(function () {
     });
 });
 function decideFor(id, state) {
+    var urlLink = Routing.generate('decide_for_white_list_request_route', { id: id });
     $.ajax({
-        // todo änder die URL beim push!
-        url: '/nwlProject/web/app_dev.php/api/whitelist-target/' + id,
+        url: urlLink,
         type: "POST",
         headers: {"apikey": apikey },
         data: {state: state},

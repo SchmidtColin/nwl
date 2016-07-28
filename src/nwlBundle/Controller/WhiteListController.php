@@ -11,6 +11,7 @@ namespace nwlBundle\Controller;
 use FOS\RestBundle\Context\Context;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Route;
 use FOS\RestBundle\Controller\FOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use nwlBundle\Entity\WhiteListRequest;
@@ -219,6 +220,8 @@ class WhiteListController extends FOSRestController
 
 
     /**
+     *
+     * @Route("/whitelist-target/{id}", options={"expose"=true}, name="_route")
      * @Post(path="/whitelist-target/{id}")
      * @ApiDoc(
      *     section="WhiteListTarget",
@@ -233,11 +236,13 @@ class WhiteListController extends FOSRestController
      */
     public function decideForWhiteListRequestAction(Request $request, $id)
     {
+
         $userService = $this->get('nwl.user');
         $whiteListTarget = $this->getDoctrine()->getRepository('nwlBundle:WhiteListTarget')->find($id);
         $state = $request->request->get('state');
         $apikey = $request->headers->get('apikey');
         $admin = $userService->getUserByApiKey($apikey);
+
 
         if(null === $whiteListTarget || null === $admin || null === $state) {
             return $this->view("The given paramters for deciding the state are not valid.", 422);
