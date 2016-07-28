@@ -17,6 +17,7 @@ use nwlBundle\Entity\WhiteListRequest;
 use nwlBundle\Entity\WhiteListTarget;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\ConstraintViolationList;
 
 class WhiteListController extends FOSRestController
@@ -237,6 +238,7 @@ class WhiteListController extends FOSRestController
         if(null === $whiteListTarget || null === $admin || null === $state) {
             return $this->view("The given paramters for deciding the state are not valid.", 422);
         }
+        $whiteListTarget->setDecisionDate( new \DateTime());
         $whiteListTarget->setState($state);
         $whiteListTarget->setDecidedBy($admin);
 

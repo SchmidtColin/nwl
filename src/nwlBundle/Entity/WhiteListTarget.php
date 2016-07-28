@@ -58,6 +58,13 @@ class WhiteListTarget
     private $decidedBy;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="decision_date", type="datetime")
+     */
+    private $decisionDate;
+
+    /**
      * @return int
      */
     public function getId()
@@ -111,6 +118,22 @@ class WhiteListTarget
     public function setDecidedBy($decidedBy)
     {
         $this->decidedBy = $decidedBy;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDecisionDate()
+    {
+        return $this->decisionDate;
+    }
+
+    /**
+     * @param \DateTime $decisionDate
+     */
+    public function setDecisionDate($decisionDate)
+    {
+        $this->decisionDate = $decisionDate;
     }
 
 }

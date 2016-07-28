@@ -45,6 +45,7 @@ class WhiteListService
             $targetDTO->setDomain($target->getDomain());
             $targetDTO->setState($target->getState());
             $targetDTO->setDecidedBy($target->getDecidedBy());
+            $targetDTO->setDecisionDate($target->getDecisionDate());
             $criteria =array('whitelistTarget'=>$target);
             $requestArray = $this->em->getRepository('nwlBundle:WhiteListRequest')->findBy($criteria);
             $targetDTO->setWhitelistRequests($requestArray);
