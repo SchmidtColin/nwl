@@ -99,6 +99,10 @@ $(document).ready(function(){
                     requestTemplate.find('.decided-by-container').hide();
                 }
 
+                if (target.state === 1) {
+                    requestTemplate.find('.domain-link').attr('href', '//' + target.domain);
+                }
+
                 requestTemplate.addClass(stateClasses[target.state]);
                 requestTemplate.find('.domain').text(target.domain);
                 requestTemplate.find('.decided-by').text(adminName);
@@ -121,9 +125,9 @@ $(document).ready(function(){
     <div id="whitelist-request-template" class="whitelist-request-entry card template">
         <div class="card-content">
             <header class="header">
-                <h4 class="domain">Domain-Name</h4>
-                <div class="decided-by-container">
-                    <label>entschied:</label>
+                <a class="domain-link"><h2 class="domain">Domain-Name</h2></a>
+                <div class="decided-by-container decision-style">
+                    <label class="decision-style">entschied:</label>
                     <div class="decided-by"></div>
                 </div>
             </header>

@@ -248,7 +248,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.decision-btns', function(event) {
-        event.stopPropagation();
+        //event.stopPropagation();
         $(this).find('.dropdown-button').dropdown('toggle');
     });
 
@@ -299,7 +299,7 @@ function update(btn) {
                             <h2 class="domain flow-text ">Domain-Name</h2>
                         </div>
 
-                        <div class="decided-by-container">
+                        <div class="decided-by-container decision-style">
                             <div>
                                 <label>entschied:</label>
                                 <span class="decided-by"></span>
@@ -312,7 +312,7 @@ function update(btn) {
                         <div class="decision">
                             <div class="decision-btns">
                                 <a class='dropdown-button btn-floating btn-large waves-effect waves-light open-button'
-                                   href='#' data-activates='decision-buttons'>
+                                   data-activates='decision-buttons'>
                                     <i class="material-icons decision-status-btn-pending">thumbs_up_down</i>
                                     <i class="material-icons decision-status-btn-allowed">thumb_up</i>
                                     <i class="material-icons decision-status-btn-denied">thumb_down</i>
