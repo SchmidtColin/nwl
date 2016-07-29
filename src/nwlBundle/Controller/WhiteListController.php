@@ -223,9 +223,21 @@ class WhiteListController extends FOSRestController
     }
 
     function getHostFromDomain($domain){
-        $subDomain = "";
-        $level = strpos($domain,".");
-        $subDomain = substr($domain,$level+1);
+        $subDomain = $domain;
+        $level = explode(".",$domain);
+        if(sizeof($level) > 2) {
+            $subDomain = "";
+            $counter = 0;
+            foreach($level as $value){
+                if($counter != 0){
+                    $subDomain .= $value;
+                    if($counter+1 != sizeof($level)){
+                        $subDomain .= '.';
+                    }
+                }
+                $counter++;
+            }
+        }
         return $subDomain;
     }
 
