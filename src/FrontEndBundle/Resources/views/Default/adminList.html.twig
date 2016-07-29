@@ -263,6 +263,7 @@ $(document).ready(function () {
             success: function (data) {
                 data = sortTargets(data);
                 insertTargets(data.processed,'#old-whitelist-requests-done');
+                $('#oldRequests').remove();
             }
         });
 

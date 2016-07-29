@@ -37,17 +37,13 @@ class WhiteListTargetRepository extends EntityRepository
 
     public function getOldByDate($amountDays)
     {
-        $now   = new \DateTime();
         $pastThirtyDays = (new \DateTime())->modify('-'.$amountDays.' days');
 
         $qb = $this->createQueryBuilder("e");
         $qb
-            ->andWhere($qb->expr()->lte('e.decisionDate', $amountDays))
-            //->andWhere()->expr()->lte('e.decisionDate', $pastThirtyDays)
-            //->andWhere('e.decisionDate lte :pastThirtyDays')
-            ->orWhere('e.state != '.WhiteListTarget::STATE_PENDING)
+            ->andWhere('e.decisionDate <= :pastThirtyDays')
+            ->andWhere('e.state != '.WhiteListTarget::STATE_PENDING)
             ->setParameter('pastThirtyDays', $pastThirtyDays )
-            ->setParameter('now', $now)
         ;
         $result = $qb->getQuery()->getResult();
 
