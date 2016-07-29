@@ -122,6 +122,7 @@
 </style>
 {% endblock %}
 {% block customScripts %}
+    <script src="{{ asset('bundles/frontend/js/sortRequests.js') }}"></script>
 <script>
 'use strict';
 var apikey = localStorage.getItem('apikey');
@@ -136,40 +137,46 @@ $(document).ready(function(){
             "apikey": apikey
         },
         success:function (data) {
-            $.each(data,function(index, element){
-
-                var requestTemplate = $('#whitelist-request-template').clone();
-                requestTemplate.removeAttr('id');
-                requestTemplate.removeClass('template');
-
-                var target = element.whitelist_target;
-                var formattedDate = new Date(element.created).format('dd.mm.yyyy " um " H:MM " Uhr"');
-                var adminName;
-                if(target.decided_by){
-                    if(!target.decided_by.firstname&&!target.decided_by.lastname) {
-                        adminName = target.decided_by.firstname+" "+target.decided_by.lastname;
-                    }else{
-                        adminName = target.decided_by.username;
-                    }
-                }else{
-                    requestTemplate.find('.decided-by-container').hide();
-                }
-
-                if (target.state === 1) {
-                    requestTemplate.find('.domain-link').attr('href', '//' + target.domain);
-                }
-
-                requestTemplate.addClass(stateClasses[target.state]);
-                requestTemplate.find('.domain').text(target.domain);
-                requestTemplate.find('.decided-by').text(adminName);
-                requestTemplate.find('.reason').text(element.reason);
-                requestTemplate.find('.created').text(formattedDate);
-                $('.whitelist-request-list').append(requestTemplate);
-                //requestTemplate.delay(index*150).fadeIn(300);
-            });
+            data = sortRequests(data);
+            insertRequests(data.pending, '#whitelist-requests-pending');
+            insertRequests(data.processed, '#whitelist-requests-done');
         }
     });
 });
+
+function insertRequests(data, elementSelector) {
+    $.each(data,function(index, element){
+
+        var requestTemplate = $('#whitelist-request-template').clone();
+        requestTemplate.removeAttr('id');
+        requestTemplate.removeClass('template');
+
+        var target = element.whitelist_target;
+        var formattedDate = new Date(element.created).format('dd.mm.yyyy " um " H:MM " Uhr"');
+        var adminName;
+        if(target.decided_by){
+            if(!target.decided_by.firstname&&!target.decided_by.lastname) {
+                adminName = target.decided_by.firstname+" "+target.decided_by.lastname;
+            }else{
+                adminName = target.decided_by.username;
+            }
+        }else{
+            requestTemplate.find('.decided-by-container').hide();
+        }
+
+        if (target.state === 1) {
+            requestTemplate.find('.domain-link').attr('href', '//' + target.domain);
+        }
+
+        requestTemplate.addClass(stateClasses[target.state]);
+        requestTemplate.find('.domain').text(target.domain);
+        requestTemplate.find('.decided-by').text(adminName);
+        requestTemplate.find('.reason').text(element.reason);
+        requestTemplate.find('.created').text(formattedDate);
+        $(elementSelector).append(requestTemplate);
+        //requestTemplate.delay(index*150).fadeIn(300);
+    });
+}
 </script>
 {% endblock %}
 {% block title %}
@@ -202,6 +209,10 @@ $(document).ready(function(){
             </div>
         </div>
     </div>
+
+    <section id="whitelist-requests-pending"></section>
+    <hr/>
+    <section id="whitelist-requests-done"></section>
 
 </div>
 <div class="legend card">
