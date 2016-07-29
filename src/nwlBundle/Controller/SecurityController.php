@@ -40,7 +40,7 @@ class SecurityController extends FOSRestController
         if ($user !== null && $user->getApikey() !== null) {
             return $this->view(array('token' => $user->getApikey()));
         } else {
-            return $this->view(array('message' => 'Invalid Credentials'), 401);
+            return $this->view(array('message' => 'Es konnte kein Benutzer mit diesen Daten gefunden werden!'));
         }
     }
 

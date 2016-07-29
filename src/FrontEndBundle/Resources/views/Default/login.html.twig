@@ -33,6 +33,13 @@
                 width: 100%;
             }
         }
+
+        #toast-container {
+            top: auto !important;
+            right: auto !important;
+            bottom: 10%;
+            left:7%;
+        }
     </style>
 {% endblock %}
 {% block customScripts %}
@@ -57,7 +64,9 @@
                 var params = $('form').serialize();
                 var username = $('#username').val();
                 $.post('{{ path('loginsecurity.auth') }}', params, function (data) {
-                    if (null != data.token) {
+                    if (null == data.token) {
+                        Materialize.toast(data.message, 3000, 'rounded');
+                    } else {
                         var apikey = data.token;
                         localStorage.setItem('apikey', apikey);
                         if (sessionStorage.getItem('url') == null) {

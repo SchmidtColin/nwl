@@ -333,8 +333,7 @@ function update(id, state) {
         }
         element.addClass('denied');
     }
-    //$('#target-'+id+' .dropdown-button').dropdown('close');
-    element.find('.dropdown-button').dropdown('close');
+    element.find('.dropdown-button').trigger('click');
 }
 </script>
 {% endblock %}
