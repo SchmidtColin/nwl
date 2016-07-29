@@ -175,6 +175,13 @@ hr {
     text-align: center;
 }
 
+#toast-container {
+    top: auto !important;
+    left: auto !important;
+    bottom: 10%;
+    right:0px;
+}
+
 @media all and (max-width: 449px){
     .accordion-arrow{
         display:                none;
@@ -198,6 +205,20 @@ hr {
 var apikey = localStorage.getItem('apikey');
 var stateClasses = ['pending', 'allowed', 'denied', 'suballowed'];
 $(document).ready(function () {
+
+    $('.restart-proxy').click(function() {
+        $.ajax({
+            url: '{{ path('restart_proxyproxy.restart') }}',
+            type: "POST",
+            headers: {"apikey": apikey },
+            success: function (resp) {
+                Materialize.toast('Proxy wurde neugestartet!', 2000);
+                console.log(resp);
+            }
+        })
+    });
+
+
     if (apikey == "null")
         window.open('{{ path('whitelist-request.login') }}', '_self');
     $.ajax({
@@ -316,16 +337,7 @@ $(document).ready(function () {
         decideFor(id, 3);
     });
 
-    $('.restart-proxy').click(function() {
-        $.ajax({
-            url: '{{ path('restart_proxyproxy.restart') }}',
-            type: "POST",
-            headers: {"apikey": apikey },
-            success: function (resp) {
-                console.log(resp);
-            }
-        })
-    });
+
 });
 
 function hasSubdomain(domain) {
@@ -397,12 +409,12 @@ function update(id, state) {
 
 {% endblock %}
 
-{% block headerLinksRight %}
-    <li><a class="waves-effect waves-light black-text restart-proxy" href="#">Proxy neu starten</a></li>
-{% endblock %}
-{% block headerLinksSide %}
-    <li><a class="waves-effect waves-light restart-proxy" href="#">Proxy neu starten</a></li>
-{% endblock %}
+{#{% block headerLinksRight %}#}
+    {#<li><a class="waves-effect waves-light black-text restart-proxy" href="#">Proxy neu starten</a></li>#}
+{#{% endblock %}#}
+{#{% block headerLinksSide %}#}
+    {#<li><a class="waves-effect waves-light restart-proxy" href="#">Proxy neu starten</a></li>#}
+{#{% endblock %}#}
 
 {% block title %}
     <h1>Alle Whitelist-Anfragen</h1>
@@ -495,4 +507,11 @@ function update(id, state) {
     </div>
     </section>
 </div>
+
+
+    <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
+        <a class="btn-floating btn-large restart-proxy" style="background-color: #6882A2" title="Proxy neustarten">
+            <i class="large material-icons">open_in_browser</i>
+        </a>
+    </div>
 {% endblock %}

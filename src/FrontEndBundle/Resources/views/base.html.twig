@@ -65,24 +65,24 @@
         }
 
         /* label focus color */
-        .input-field input[type=text]:focus + label {
+        .input-field input[type=text]:focus + label, .input-field input[type=password]:focus + label {
             color: #6882A2;
         }
 
         /* label underline focus color */
-        .input-field input[type=text]:focus {
+        .input-field input[type=text]:focus, .input-field input[type=password]:focus {
             border-bottom: 1px solid #6882A2;
             box-shadow: 0 1px 0 0 #6882A2;
         }
 
         /* valid color */
-        .input-field input[type=text].valid {
+        .input-field input[type=text].valid, .input-field input[type=password].valid {
             border-bottom: 1px solid #6882A2;
             box-shadow: 0 1px 0 0 #6882A2;
         }
 
         /* invalid color */
-        .input-field input[type=text].invalid {
+        .input-field input[type=text].invalid, .input-field input[type=password].invalid  {
             border-bottom: 1px solid #6882A2;
             box-shadow: 0 1px 0 0 #6882A2;
         }
@@ -118,6 +118,8 @@
                 window.open('{{ path('whitelist-request.login') }}', '_self');
                 event.preventDefault();
             });
+
+
         });
     </script>
 </head>
@@ -136,17 +138,24 @@
                                                                                     style="color: #6882A2">menu</i></a>
                 <ul class="right hide-on-med-and-down ">
                     <li><a class="waves-effect waves-light black-text"
-                           href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
+                           href="{{ path('whitelist-request.list',{'username' : username }) }}">Meine Anfragen</a></li>
                     <li><a class="waves-effect waves-light black-text"
                            href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a></li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li><a class="waves-effect waves-light black-text restart-proxy" href="#">Proxy neu starten</a></li>
+                    {% endif %}
+
                     <li><a class="waves-effect waves-light black-text logout" href="#">Logout</a></li>
                     {% block headerLinksRight %}{% endblock %}
                 </ul>
                 <ul class="side-nav" id="mobile-demo">
                     <li><a class="waves-effect waves-light"
-                           href="{{ path('whitelist-request.list',{'username' : username }) }}">Anfragen</a></li>
+                           href="{{ path('whitelist-request.list',{'username' : username }) }}">Meine Anfragen</a></li>
                     <li><a class="waves-effect waves-light"
                            href="{{ path('whitelist-request.form',{'username': username}) }}">Anfrage Erstellen</a></li>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <li><a class="waves-effect waves-light restart-proxy" href="#">Proxy neu starten</a></li>
+                    {% endif %}
                     <li><a class="waves-effect waves-light logout" href="#">Logout</a></li>
                     {% block headerLinksSide %}{% endblock %}
                 </ul>

@@ -16,6 +16,10 @@
         .dummy {
             visibility: hidden;
         }
+
+        #reason, #reasonlabel{
+            color: #6882A2;
+        }
     </style>
 {% endblock %}
 
@@ -162,7 +166,7 @@
                     <div class="input-field col s9 offset-s1">
                         <textarea id="reason" class="materialize-textarea" length="150" name="reason"
                                   oninput="updateSubmit()"></textarea>
-                        <label for="reason"><i
+                        <label id="reasonlabel" for="reason"><i
                                     class="tiny material-icons left">chat_bubble_outline</i>Begründung</label>
                     </div>
                 </div>
