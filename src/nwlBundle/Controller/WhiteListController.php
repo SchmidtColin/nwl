@@ -97,6 +97,7 @@ class WhiteListController extends FOSRestController
     }
 
     /**
+     * @Route("/user/{username}/whitelist-request", options={"expose"=true}, name="_route")
      * @Post(path="/user/{username}/whitelist-request")
      * @ApiDoc(
      *     section="WhiteListRequest",

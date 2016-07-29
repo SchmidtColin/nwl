@@ -6,9 +6,12 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     {% block customStyles %}{% endblock %}
     <!--Externe Scripts-->
+
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ asset('bundles/frontend/js/DateFormat.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     {% block customScripts %}{% endblock %}
     <style>
         * {
@@ -55,6 +58,12 @@
             color: #6882A2;
         }
 
+
+        .btn{
+            background-color: #6882A2;
+            border-radius: 20px;
+        }
+
         /* label focus color */
         .input-field input[type=text]:focus + label {
             color: #6882A2;
@@ -83,10 +92,6 @@
             color: #6882A2;
         }
 
-        /* label color */
-        .textarea label {
-            color: #6882A2;
-        }
 
         a:not(:link) {
             color: inherit;

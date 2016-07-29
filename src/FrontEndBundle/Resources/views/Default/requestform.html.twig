@@ -22,11 +22,7 @@
 {% block customScripts %}
     <script src="{{ asset('bundles/frontend/js/domainValidation.js') }}"></script>
     <script>
-        if (sessionStorage.getItem('url') == null) {
-            var url = '{{ url }}';
-        } else {
-            var url = sessionStorage.getItem('url');
-        }
+        var url;
         var user;
         if (sessionStorage.getItem('user') == null) {
             user = '{{ user }}';
@@ -35,23 +31,43 @@
         }
 
         var apikey = localStorage.getItem('apikey');
-        var url = (sessionStorage.getItem('url') == null) ? '{{ url }}' : sessionStorage.getItem('url');
+        url = (sessionStorage.getItem('url') == null) ? '{{ url }}' : sessionStorage.getItem('url');
         sessionStorage.setItem('url', url);
         sessionStorage.setItem('user', user);
         $(document).ready(function () {
+            var reason =
             $('.modal-trigger').leanModal();
             if (apikey == "null") {
                 window.open('../../login', '_self');
             } else {
-                console.log("URL: " + sessionStorage.getItem('url'));
                 urlFromStahl(url);
                 $('#headers').removeAttr("hidden");
                 $('#container').removeAttr("hidden");
             }
+            $('#sub').click(function(event){
+                event.preventDefault();
+            });
+            $('#submitting').on('click', function(){
+                var username = '{{ username }}';
+                url = $('#domain').val();
+                var urlLink = Routing.generate('create_white_list_request_route', { username: username});
+                $.ajax({
+                    url: urlLink,
+                    type: "POST",
+                    headers: {"apikey": apikey },
+                    data: {domain : url, reason : $('#reason').val()},
+                    dataType: 'json',
+                    success: function (data) {
+                        window.open('../' + username, '_self');
+                    },
+                    error: function(data){
+                        Materialize.toast("Ein Fehler ist aufgetreten. Bitte überprüfen Sie ihre Eingaben!", 3000, 'rounded');
+                    }
+                });
+            })
         });
 
         function updateSubmit() {
-            console.log(apikey);
             if ($("#domain").val() == '' || $("#reason").val() == '') {
                 $("#sub").addClass("disabled").prop('disabled', true);
             } else {
@@ -136,7 +152,7 @@
 
     {% block mainContent %}
         <div hidden="hidden" id="container" class="container">
-            <form method="POST">
+            <form novalidate>
                 <div class="row">
                     <div class="input-field col s9 offset-s1">
                         <input id="domain" type="text" class="validate" name="domain"
@@ -166,10 +182,9 @@
                         <div class="modal-footer">
                             <a href="#!"
                                class=" modal-action modal-close waves-effect waves-green btn-flat">Abbrechen</a>
-                            <button id="submitting" class=" modal-action modal-close waves-effect waves-green btn-flat"
-                                    onclick="validUserUrl()" type="submit"
-                                    name="action">Bestätigen
-                            </button>
+                            <div id="submitting" class="modal-action modal-close waves-effect waves-green btn-flat"
+                                    onclick="validUserUrl()">Bestätigen
+                            </div>
                         </div>
                     </div>
                 </div>

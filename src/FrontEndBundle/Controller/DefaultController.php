@@ -44,42 +44,8 @@ class DefaultController extends Controller
      */
     public function createFormAction(Request $request, $username)
     {
-        $whitelistRequest = new WhiteListRequest();
-        $domain = $request->request->get('domain');
-        $reason = $request->request->get('reason');
         $givenUrl = $request->request->get('url');
         $givenUser = $request->request->get('user');
-        $requestExists = null;
-
-        if ($domain != null && $reason != null) {
-            $userService = $this->get('nwl.user');
-            $whitelistService = $this->get('nwl.whitelist');
-
-            $user = $userService->getById($username);
-            $target = $whitelistService->getOrCreateTargetByDomain($domain);
-
-            $whitelistRequest->setUser($user);
-            $whitelistRequest->setWhitelistTarget($target);
-            $whitelistRequest->setReason($reason);
-            $whitelistRequest->setCreated(new \DateTime());
-
-
-            $allUserRequests = $whitelistService->findWhiteListRequestsByUsername($username);
-
-            foreach ($allUserRequests as $curWhitelistRequest) {
-                if($whitelistRequest->getWhitelistTarget() == $curWhitelistRequest->getWhitelistTarget()) {
-                    $requestExists = "true";
-                }
-            }
-
-            if($requestExists != "true"){
-                $whitelistService->createWhiteListRequest($whitelistRequest);
-            }
-
-            $params = array('username' => $username);
-            $template = $userService->getTemplate($user);
-            return $this->render($template, $params);
-        }
         $params = array('username' => $username, 'url' => $givenUrl, 'user'=>$givenUser);
         return $this->render('FrontEndBundle:Default:requestform.html.twig', $params);
     }
