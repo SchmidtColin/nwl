@@ -292,7 +292,7 @@ $(document).ready(function () {
 
     $('#oldRequests').click(function(event) {
         if (apikey == "null")
-            window.open({{ path('whitelist-request.login') }}, '_self');
+            window.open('{{ path('whitelist-request.login') }}', '_self');
         $.ajax({
             url: '{{ path('list_white_list_targetswhitelistTarget.all', {'age' : 2}) }}',
             type: "GET",
