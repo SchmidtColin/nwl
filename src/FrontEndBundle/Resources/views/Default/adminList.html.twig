@@ -199,7 +199,7 @@ var apikey = localStorage.getItem('apikey');
 var stateClasses = ['pending', 'allowed', 'denied', 'suballowed'];
 $(document).ready(function () {
     if (apikey == "null")
-        window.open('/nwl/web/app_dev.php/frontend/login', '_self');
+        window.open('{{ path('whitelist-request.login') }}', '_self');
     $.ajax({
         url: '{{ path('list_white_list_targetswhitelistTarget.all', {'age' : 0}) }}',
         type: "GET",
@@ -277,7 +277,7 @@ $(document).ready(function () {
 
     $('#oldRequests').click(function(event) {
         if (apikey == "null")
-            window.open('/nwl/web/app_dev.php/frontend/login', '_self');
+            window.open({{ path('whitelist-request.login') }}, '_self');
         $.ajax({
             url: '{{ path('list_white_list_targetswhitelistTarget.all', {'age' : 2}) }}',
             type: "GET",
