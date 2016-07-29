@@ -103,11 +103,15 @@ hr {
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
 
-.allow-button, .deny-button, .open-button, .visit-button{
+.decision-button, .open-button {
     display:                flex;
     flex-flow:              row nowrap;
     justify-content:        center;
     align-items:            center;
+}
+
+.whitelist-target-entry:not([data-has-subdomain]) .allow-subdomain-button {
+    display: none;
 }
 
 .decision-btns i{
@@ -206,6 +210,9 @@ $(document).ready(function () {
             }else{
                 targetTemplate.find('.decided-by-container').hide();
             }
+
+            if (hasSubdomain(target.domain)) targetTemplate.attr('data-has-subdomain', '');
+
             targetTemplate.attr('id','target-'+target.id)
             targetTemplate.find('.domain').text(target.domain);
             targetTemplate.find('.decided-by').text(adminName);
@@ -281,6 +288,17 @@ $(document).ready(function () {
         decideFor(id, 2);
     });
 });
+
+function hasSubdomain(domain) {
+    if (!domain || typeof domain !== 'string') return false;
+    var levels = domain.split('.');
+    var len = levels.length;
+    for (var i = 0; i < levels.length; i++) {
+        if (!levels[i].length || levels[i] === 'www') len--;
+    }
+    return len > 2;
+}
+
 function decideFor(id, state) {
     var urlLink = Routing.generate('decide_for_white_list_request_route', { id: id });
     $.ajax({
@@ -355,13 +373,16 @@ function update(id, state) {
                                     <i class="material-icons decision-status-btn-denied">thumb_down</i>
                                 </a>
                                 <ul id='decision-buttons' class='dropdown-content decision-list'>
-                                    <li class="waves-effect waves-green blue lighten-2 visit-button">
+                                    <li class="waves-effect waves-green blue lighten-2 decision-button visit-button">
                                         <a class="visit-link" href="#" target="_blank"><i class="material-icons" title="Website besuchen">open_in_new</i></a>
                                     </li>
-                                    <li class="waves-effect waves-green light-green allow-button">
+                                    <li class="waves-effect waves-green light-green decision-button allow-button">
                                         <i class="material-icons" title="Domain freigeben">thumb_up</i>
                                     </li>
-                                    <li class="waves-effect waves-red red darken-3 deny-button">
+                                    <li class="waves-effect waves-green yellow accent-4 decision-button allow-subdomain-button">
+                                        <i class="material-icons" title="Nur Subdomain freigeben">thumb_up</i>
+                                    </li>
+                                    <li class="waves-effect waves-red red darken-3 decision-button deny-button">
                                         <i class="material-icons" title="Freigabeantrag ablehnen">thumb_down</i>
                                     </li>
                                 </ul>
