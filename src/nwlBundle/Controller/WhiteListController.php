@@ -272,7 +272,7 @@ class WhiteListController extends FOSRestController
      *     description="Refreshes Proxy server configs"
      * )
      */
-    public function  restartProxyAction(Request $request)
+    public function restartProxyAction(Request $request)
     {
         $userService = $this->get('nwl.user');
         $apikey = $request->headers->get('apikey');

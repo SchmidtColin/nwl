@@ -292,6 +292,17 @@ $(document).ready(function () {
         var id = $(this).attr('data-id');
         decideFor(id, 2);
     });
+
+    $('.restart-proxy').click(function() {
+        $.ajax({
+            url: '{{ path('restart_proxyproxy.restart') }}',
+            type: "POST",
+            headers: {"apikey": apikey },
+            success: function (resp) {
+                console.log(resp);
+            }
+        })
+    });
 });
 
 function hasSubdomain(domain) {
@@ -341,7 +352,16 @@ function update(id, state) {
     element.find('.dropdown-button').trigger('click');
 }
 </script>
+
 {% endblock %}
+
+{% block headerLinksRight %}
+    <li><a class="waves-effect waves-light black-text restart-proxy" href="#">Proxy neu starten</a></li>
+{% endblock %}
+{% block headerLinksSide %}
+    <li><a class="waves-effect waves-light restart-proxy" href="#">Proxy neu starten</a></li>
+{% endblock %}
+
 {% block title %}
     <h1>Alle Whitelist-Anfragen</h1>
 {% endblock %}
