@@ -222,6 +222,13 @@ class WhiteListController extends FOSRestController
 
     }
 
+    function getHostFromDomain($domain){
+        $subDomain = "";
+        $level = strpos($domain,".");
+        $subDomain = substr($domain,$level+1);
+        return $subDomain;
+    }
+
 
     /**
      *
@@ -229,7 +236,8 @@ class WhiteListController extends FOSRestController
      * @Post(path="/whitelist-target/{id}")
      * @ApiDoc(
      *     section="WhiteListTarget",
-     *     description="allows or denies permission for the Domain of the Whitelist-Target with {id}",
+     *     description="allows or denies permission for the Domain of the Whitel,
+     * ist-Target with {id}",
      *     parameters={
      *     {"name"="state", "dataType"="integer", "required"=true, "description"="state of the decision - allow or deny"}
      *     }
@@ -255,13 +263,18 @@ class WhiteListController extends FOSRestController
         $whiteListTarget->setState($state);
         $whiteListTarget->setDecidedBy($admin);
 
-        $stateArgument = $state == 1 ? '-dw' : '-db';
+        $stateArgument = $state == 1 || $state == 3 ? '-dw' : '-db';
         $path = $_SERVER["DOCUMENT_ROOT"];
-        $cmd = $path.'/plink.exe -pw abc123! -ssh "test@192.168.1.16" /home/test/freigeben.sh '.$stateArgument.' '.$whiteListTarget->getDomain();
-
-        $this->get('doctrine.orm.default_entity_manager')->flush();
-
+        $domain = $state == 3 ? $whiteListTarget->getDomain() : $this->getHostFromDomain($whiteListTarget->getDomain());
+        $cmd = $path.'/plink.exe -pw abc123! -ssh "test@192.168.1.16" /home/test/freigeben.sh '.$stateArgument.' '.$domain;
+        if($state == 3)
+        {
+            $host = $this->getHostFromDomain($whiteListTarget->getDomain());
+            $cmd2 = $path.'/plink.exe -pw abc123! -ssh "test@192.168.1.16" /home/test/freigeben.sh -db '.$host;
+            pclose(popen("start /B ". $cmd2, "r"));
+        }
         pclose(popen("start /B ". $cmd, "r"));
+        $this->get('doctrine.orm.default_entity_manager')->flush();
         return $this->view('OK');
     }
 
