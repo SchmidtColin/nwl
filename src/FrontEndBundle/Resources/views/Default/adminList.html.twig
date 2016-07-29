@@ -71,6 +71,10 @@
     background: #c8e6c9;
 }
 
+.suballowed{
+    background: #fff176;
+}
+
 .denied {
     background: #ef9a9a;
 }
@@ -139,15 +143,25 @@ hr {
     background: #c62828;
 }
 
+.suballowed .dropdown-button {
+    background: #ffd600 ;
+}
+
 .decision-status-btn-denied,
 .decision-status-btn-allowed,
 .decision-status-btn-pending {
     display: none !important;
 }
 
+
 .allowed .decision-status-btn-allowed {
     display: block !important;
 }
+
+.suballowed .decision-status-btn-allowed {
+    display: block !important;
+}
+
 .denied .decision-status-btn-denied {
     display: block !important;
 }
@@ -180,7 +194,7 @@ hr {
 <script>
 'use strict';
 var apikey = localStorage.getItem('apikey');
-var stateClasses = ['pending', 'allowed', 'denied','allowed'];
+var stateClasses = ['pending', 'allowed', 'denied', 'suballowed'];
 $(document).ready(function () {
     if (apikey == "null")
         window.open('/nwl/web/app_dev.php/frontend/login', '_self');
@@ -348,6 +362,9 @@ function update(id, state) {
         if(element.hasClass('denied')){
             element.removeClass('denied');
         }
+        if(element.hasClass('suballowed')){
+            element.removeClass('suballowed');
+        }
         element.addClass('allowed');
     }else if(state == 2){
         if(element.hasClass('pending')){
@@ -355,6 +372,9 @@ function update(id, state) {
         }
         if(element.hasClass('allowed')){
             element.removeClass('allowed');
+        }
+        if(element.hasClass('suballowed')){
+            element.removeClass('suballowed');
         }
         element.addClass('denied');
     }else if(state == 3){
@@ -364,10 +384,10 @@ function update(id, state) {
         if(element.hasClass('denied')){
             element.removeClass('denied');
         }
-//        if(element.hasClass('allowed')){
-//            element.removeClass('allowed');
-//        }
-        element.addClass('allowed');
+        if(element.hasClass('allowed')){
+            element.removeClass('allowed');
+        }
+        element.addClass('suballowed');
     }
     element.find('.dropdown-button').trigger('click');
 }
