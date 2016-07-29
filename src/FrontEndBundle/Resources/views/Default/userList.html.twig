@@ -152,7 +152,11 @@ function insertRequests(data, elementSelector) {
         requestTemplate.removeClass('template');
 
         var target = element.whitelist_target;
-        var formattedDate = new Date(element.created).format('dd.mm.yyyy " um " H:MM " Uhr"');
+
+        var formattedDate;
+        if (checkIfInternetExplorer()) formattedDate = new Date(element.created).format('dd.mm.yyyy " um " H:MM " Uhr"');
+        else formattedDate = element.created;
+
         var adminName;
         if(target.decided_by){
             if(!target.decided_by.firstname&&!target.decided_by.lastname) {

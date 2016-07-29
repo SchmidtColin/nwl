@@ -240,7 +240,9 @@ $(document).ready(function () {
                 }else{
                     adminName = target.decided_by.username;
                 }
-                decisionDate = new Date(target.decision_date).format('dd.mm.yyyy " um " H:MM " Uhr"');
+                if (checkIfInternetExplorer())
+                    decisionDate = new Date(target.decision_date).format('dd.mm.yyyy " um " H:MM " Uhr"');
+                else decisionDate = target.decision_date;
             }else{
                 targetTemplate.find('.decided-by-container').hide();
             }
@@ -265,7 +267,7 @@ $(document).ready(function () {
                 requestTemplate.removeClass('template');
 
                 var formattedDate = new Date(request.created);
-                formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
+                if (checkIfInternetExplorer()) formattedDate = formattedDate.format('dd.mm.yyyy " um " H:MM " Uhr"');
 
                 requestTemplate.find('.user').text(request.user.username);
                 requestTemplate.find('.reason').text(request.reason);
