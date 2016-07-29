@@ -78,6 +78,7 @@
 .pending {
     background: #b3e5fc;
 }
+
 .domain-container{
     flex-grow:                  1;
 }
@@ -179,7 +180,7 @@ hr {
 <script>
 'use strict';
 var apikey = localStorage.getItem('apikey');
-var stateClasses = ['pending', 'allowed', 'denied'];
+var stateClasses = ['pending', 'allowed', 'denied','allowed'];
 $(document).ready(function () {
     if (apikey == "null")
         window.open('/nwl/web/app_dev.php/frontend/login', '_self');
@@ -223,6 +224,7 @@ $(document).ready(function () {
             targetTemplate.find('.decision-date').text(decisionDate);
             targetTemplate.addClass(stateClasses[target.state]);
             targetTemplate.find('.allow-button').attr('data-id', target.id);
+            targetTemplate.find('.allow-subdomain-button').attr('data-id', target.id);
             targetTemplate.find('.deny-button').attr('data-id', target.id);
             targetTemplate.find('.visit-link').attr('href', '//' + target.domain);
             targetTemplate.find('.dropdown-button').attr('data-activates','decision-buttons-'+target.id);
@@ -292,6 +294,11 @@ $(document).ready(function () {
         var id = $(this).attr('data-id');
         decideFor(id, 2);
     });
+    $('.allow-subdomain-button').click(function (event) {
+        event.stopPropagation();
+        var id = $(this).attr('data-id');
+        decideFor(id, 3);
+    });
 });
 
 function hasSubdomain(domain) {
@@ -326,17 +333,30 @@ function update(id, state) {
     if(state == 1){
         if(element.hasClass('pending')){
             element.removeClass('pending');
-        }else{
+        }
+        if(element.hasClass('denied')){
             element.removeClass('denied');
         }
         element.addClass('allowed');
-    }else{
+    }else if(state == 2){
         if(element.hasClass('pending')){
             element.removeClass('pending');
-        }else{
+        }
+        if(element.hasClass('allowed')){
             element.removeClass('allowed');
         }
         element.addClass('denied');
+    }else if(state == 3){
+        if(element.hasClass('pending')){
+            element.removeClass('pending');
+        }
+        if(element.hasClass('denied')){
+            element.removeClass('denied');
+        }
+//        if(element.hasClass('allowed')){
+//            element.removeClass('allowed');
+//        }
+        element.addClass('allowed');
     }
     element.find('.dropdown-button').trigger('click');
 }
