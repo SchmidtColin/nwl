@@ -3,12 +3,11 @@
  */
 
 var sortRequests = function(requests) {
-    console.log(requests);
     var pending = [], processed = [];
     for (var i = 0; i < requests.length; i++) {
         var target = requests[i].whitelist_target;
-        if (target.state) processed.push(target);
-        else pending.push(target);
+        if (target.state) processed.push(requests[i]);
+        else pending.push(requests[i]);
     }
 
     pending.sort(function(a, b) {
